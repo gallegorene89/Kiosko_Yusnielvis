@@ -25,7 +25,12 @@
 
   <script>
     const urlCSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSdGJb4kwwP4q1T67lsBinMWC7zey_K8j3wtLwn8jGqz13Srnd3EmdmtUAO_EbgUCVr3ewFJVv7YG2y/pub?gid=0&single=true&output=csv';
-
+    // Mapa de colores permitidos en Tailwind
+    const colorMap = {
+    Azul: 'bg-blue-500',
+    Red: 'bg-red-500',
+    Gris: 'bg-gray-500'
+    };
     fetch(urlCSV)
       .then(response => response.text())
       .then(csvText => {
@@ -55,13 +60,15 @@
                 imageElement.alt = prod.Nombre;
                 imageElement.className = 'h-60 w-full object-cover rounded-md mb-3';
 
-              // Agregar etiqueta si existe en el CSV
+                // Agregar etiqueta si existe en el CSV
+                // Color de fondo dinámico desde la hoja de cálculo
+                const colorClase = colorMap[prod.Color?.trim()] || 'bg-gray-500'
                 if (prod.Etiqueta?.trim()) {
                     const etiqueta = document.createElement('span');
                     etiqueta.textContent = prod.Etiqueta;
                     // etiqueta.className = 'absolute top-2 left-2 bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow';
                     // etiqueta.className = 'absolute top-2 right-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow';
-                    etiqueta.className = 'absolute top-2 right-2 bg-red-500 text-white text-sm font-semibold px-3 py-1.5 rounded-full shadow';
+                    etiqueta.className = `absolute top-2 right-2 ${colorClase} text-white text-sm font-semibold px-3 py-1.5 rounded-full shadow`;
                     
                     card.appendChild(etiqueta);
                 }
