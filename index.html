@@ -40,31 +40,39 @@
             
             // Mostrar los productos en el contenedor
             productos.forEach(prod => {
-              const card = document.createElement('div');
-              card.className = 'bg-white rounded-2xl shadow p-4 border border-gray-200';
-              
-              // Si no hay imagen, usar un icono por defecto local
-              const imageSrc = prod.Imagen ? prod.Imagen : 'fotos/no_imagen.jpg'; // Ruta relativa a la imagen de fallback
+                const card = document.createElement('div');
+                // card.className = 'bg-white rounded-2xl shadow p-4 border border-gray-200';
+                card.className = 'relative bg-white rounded-2xl shadow p-4 border border-gray-200';
 
-              // Crear la imagen con el manejador de error para mostrar el icono si no se carga
-              const imageElement = document.createElement('img');
-              imageElement.src = imageSrc;
-              imageElement.alt = prod.Nombre;
-              imageElement.className = 'h-60 w-full object-cover rounded-md mb-3';
 
-              // En caso de error al cargar la imagen, cambiarla a una imagen de fallback
-              imageElement.onerror = function() {
-                this.src = 'no_imagen.jpg';
-              };
+                
+                // Si no hay imagen, usar un icono por defecto local
+                const imageSrc = prod.Imagen ? prod.Imagen : 'fotos/no_imagen.jpg'; // Ruta relativa a la imagen de fallback
 
-              card.appendChild(imageElement);
+                // Crear la imagen con el manejador de error para mostrar el icono si no se carga
+                const imageElement = document.createElement('img');
+                imageElement.src = imageSrc;
+                imageElement.alt = prod.Nombre;
+                imageElement.className = 'h-60 w-full object-cover rounded-md mb-3';
 
-              card.innerHTML += `
-                <h2 class="text-xl font-semibold text-green-800">${prod.Nombre}</h2>
-                <p class="text-gray-600 text-sm mb-2">${prod.Descripcion}</p>
-                <p class="text-lg font-bold text-green-600">$${prod.Precio}</p>
-              `;
-              container.appendChild(card);
+              // Agregar etiqueta si existe en el CSV
+                if (prod.Etiqueta?.trim()) {
+                    const etiqueta = document.createElement('span');
+                    etiqueta.textContent = prod.Etiqueta;
+                    // etiqueta.className = 'absolute top-2 left-2 bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow';
+                    // etiqueta.className = 'absolute top-2 right-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow';
+                    etiqueta.className = 'absolute top-2 right-2 bg-red-500 text-white text-sm font-semibold px-3 py-1.5 rounded-full shadow';
+                    
+                    card.appendChild(etiqueta);
+                }
+                card.appendChild(imageElement);
+
+                card.innerHTML += `
+                    <h2 class="text-xl font-semibold text-green-800">${prod.Nombre}</h2>
+                    <p class="text-gray-600 text-sm mb-2">${prod.Descripcion}</p>
+                    <p class="text-lg font-bold text-green-600">$${prod.Precio}</p>
+                `;
+                container.appendChild(card);
             });
 
             // Mostrar productos y ocultar el spinner
