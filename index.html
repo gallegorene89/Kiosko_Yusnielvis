@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kiosko - Productos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <div class="max-w-6xl mx-auto py-10 px-4">
+    <h1 class="text-3xl font-bold mb-6 text-center text-green-700">Ofertas de Nuestro Kiosko</h1>
+
+    <!-- Spinner de carga -->
+  <div id="loader" class="flex justify-center items-center my-10">
+    <div class="animate-spin rounded-full h-10 w-10 border-t-4 border-green-600 border-opacity-50"></div>
+    <span class="ml-3 text-green-600 font-medium">Cargando productos...</span>
+  </div>
+
+    <div id="productos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+    <!-- Sección para mostrar la fecha de actualización general -->
+    <p class="text-center text-sm text-gray-500 mt-6" id="fecha-actualizacion"></p>
+  </div>
+  
+
+  <script>
+    const urlCSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSdGJb4kwwP4q1T67lsBinMWC7zey_K8j3wtLwn8jGqz13Srnd3EmdmtUAO_EbgUCVr3ewFJVv7YG2y/pub?gid=0&single=true&output=csv';
+
+    fetch(urlCSV)
+      .then(response => response.text())
+      .then(csvText => {
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          complete: function(results) {
+            const productos = results.data;
+            const container = document.getElementById('productos');
+
+            
+            
+            // Mostrar los productos en el contenedor
+            productos.forEach(prod => {
+              const card = document.createElement('div');
+              card.className = 'bg-white rounded-2xl shadow p-4 border border-gray-200';
+              
+              // Si no hay imagen, usar un icono por defecto local
+              const imageSrc = prod.Imagen ? prod.Imagen : 'fotos/no_imagen.jpg'; // Ruta relativa a la imagen de fallback
+
+              // Crear la imagen con el manejador de error para mostrar el icono si no se carga
+              const imageElement = document.createElement('img');
+              imageElement.src = imageSrc;
+              imageElement.alt = prod.Nombre;
+              imageElement.className = 'h-60 w-full object-cover rounded-md mb-3';
+
+              // En caso de error al cargar la imagen, cambiarla a una imagen de fallback
+              imageElement.onerror = function() {
+                this.src = 'no_imagen.jpg';
+              };
+
+              card.appendChild(imageElement);
+
+              card.innerHTML += `
+                <h2 class="text-xl font-semibold text-green-800">${prod.Nombre}</h2>
+                <p class="text-gray-600 text-sm mb-2">${prod.Descripcion}</p>
+                <p class="text-lg font-bold text-green-600">$${prod.Precio}</p>
+              `;
+              container.appendChild(card);
+            });
+
+            // Mostrar productos y ocultar el spinner
+            document.getElementById('loader').style.display = 'none';
+            container.classList.remove('hidden');
+
+            // Mostrar la fecha de última actualización general (la fecha actual)
+            // const fechaActualizacion = new Date().toLocaleDateString(); // Fecha actual
+            // Buscar la primera fecha válida de actualización
+            const filaConFecha = productos.find(p => p.FechaActualizacion?.trim());
+            const fechaActualizacion = filaConFecha?.FechaActualizacion || 'desconocida';
+            document.getElementById('fecha-actualizacion').textContent = `Última actualización: ${fechaActualizacion}`;
+          }
+        });
+      })
+      .catch(error => console.error('Error al obtener el CSV:', error));
+  </script>
+</body>
+</html>
