@@ -8,9 +8,42 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body class="bg-gray-50 text-gray-800">
-    <div class="max-w-6xl mx-auto py-10 px-4">
-        <h1 class="text-3xl font-bold mb-6 text-center text-green-700">Ofertas de Nuestro Kiosko</h1>
+  <header class="bg-green-700 text-white py-4 shadow-md">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+      
+      <!-- Nombre del sitio -->
+      <h1 class="text-2xl font-bold tracking-wide flex items-center space-x-2">
+        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M3 9l1-5h16l1 5v2a2 2 0 01-2 2v6a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3H9v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-6a2 2 0 01-2-2V9zM4.618 4L4 8h16l-.618-4H4.618z" />
+        </svg>
+        <span>Kiosko "El Dinámico"</span>
+      </h1>
+      
+      <!-- <h1 class="text-2xl font-bold tracking-wide">🍍 Kiosko "El Dinámico"</h1> -->
+      
+      <!-- Eslogan o mensaje -->
+      <p class="text-sm sm:text-base text-green-100">¡Productos frescos, precios justos, cerca de ti!</p>
+      
+    </div>
+  </header>
+  
+    <!-- <div class="max-w-6xl mx-auto py-10 px-4">
+        <h1 class="text-3xl font-bold mb-6 text-center text-green-700">Kiosko "El Dinámico"</h1> -->
 
+    <!-- search productby nombre -->
+    <div class="relative max-w-md mx-auto mb-6">
+      <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+        🔍
+      </span>
+      <input
+        id="buscador"
+        type="text"
+        placeholder="Buscar producto..."
+        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+      />
+    </div>
+    
+  
         <!-- Spinner de carga -->
     <div id="loader" class="flex justify-center items-center my-10">
         <div class="animate-spin rounded-full h-10 w-10 border-t-4 border-green-600 border-opacity-50"></div>
@@ -20,20 +53,80 @@
     <div id="anuncio" class="hidden max-w-3xl mx-auto border border-red-300 bg-red-100 text-red-800 rounded-lg px-6 py-4 mb-6 text-center text-base font-semibold shadow-md"></div>
 
 
-    <div id="productos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+    <!-- <div id="productos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div> -->
+    <div id="productos" class="px-4 sm:px-0 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+
     <!-- Sección para mostrar la fecha de actualización general -->
     <p class="text-center text-sm text-gray-500 mt-6" id="fecha-actualizacion"></p>
-  </div>
+    </div>
+
+    <!-- mini spinner para carga progresiva de productos -->
+    <div id="scroll-loader" class="hidden flex justify-center items-center my-8">
+      <div class="animate-spin rounded-full h-6 w-6 border-t-4 border-green-500 border-opacity-50"></div>
+      <span class="ml-2 text-green-600 text-sm font-medium">Cargando más...</span>
+    </div>
+    
+    <footer class="bg-green-700 text-white mt-1">
+      <div class="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
+        
+        <!-- Dirección -->
+        <div class="flex items-start space-x-3">
+          <svg class="w-5 h-5 mt-1 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 12.414a4 4 0 10-5.657 5.657l4.243 4.243a1 1 0 001.414 0l4.243-4.243a1 1 0 000-1.414z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <div>
+            <p class="font-semibold">Dirección</p>
+            <p>Libertad 30, Aguada Pasajeros</p>
+          </div>
+        </div>
+    
+        <!-- Teléfono -->
+        <div class="flex items-start space-x-3">
+          <svg class="w-5 h-5 mt-1 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h1.6a1 1 0 011 .77l1.2 5a1 1 0 01-.25.92L7 12l3 3 1.3-1.3a1 1 0 01.92-.25l5 1.2a1 1 0 01.77 1V19a2 2 0 01-2 2h-1A16 16 0 013 5z" />
+          </svg>
+          <div>
+            <p class="font-semibold">Teléfono</p>
+            <p>+53 58786491</p>
+          </div>
+        </div>
+    
+        <!-- Horarios -->
+        <div class="flex items-start space-x-3">
+          <svg class="w-5 h-5 mt-1 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2m4-2a8 8 0 11-8-8 8 8 0 018 8z" />
+          </svg>
+          <div>
+            <p class="font-semibold">Horario</p>
+            <p>Lunes a Sábado: 8:00 AM – 6:00 PM<br>Domingo: Cerrado</p>
+          </div>
+        </div>
+    
+      </div>
+      <div class="text-center text-xs text-white bg-green-800 py-3">
+        © 2025. Todos los derechos reservados.
+      </div>
+    </footer>
+    
   
 
   <script>
-    const urlCSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSdGJb4kwwP4q1T67lsBinMWC7zey_K8j3wtLwn8jGqz13Srnd3EmdmtUAO_EbgUCVr3ewFJVv7YG2y/pub?gid=0&single=true&output=csv';
+    const baseCSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSdGJb4kwwP4q1T67lsBinMWC7zey_K8j3wtLwn8jGqz13Srnd3EmdmtUAO_EbgUCVr3ewFJVv7YG2y/pub?gid=0&single=true&output=csv';
+    const urlCSV = `${baseCSV}&cacheBust=${Date.now()}`;
+    
     // Mapa de colores permitidos en Tailwind
     const colorMap = {
-    Azul: 'bg-blue-500',
-    Red: 'bg-red-500',
-    Gris: 'bg-gray-500'
+          Azul: 'bg-blue-500',
+          Red: 'bg-red-500',
+          Gris: 'bg-gray-500'
     };
+ 
+    let container, productos = [];
+    let productosFiltrados = [];
+    let currentIndex = 0;
+    const pageSize = 1000;
+
     fetch(urlCSV)
       .then(response => response.text())
       .then(csvText => {
@@ -41,8 +134,31 @@
           header: true,
           skipEmptyLines: true,
           complete: function(results) {
-            const productos = results.data;
-            const container = document.getElementById('productos');
+            document.getElementById('buscador').addEventListener('input', function (e) {
+            const valor = e.target.value.toLowerCase().trim();
+            productosFiltrados = productos.filter(p =>
+              // p.Nombre?.toLowerCase().includes(valor)
+              p.Nombre?.toLowerCase().startsWith(valor)
+            );
+
+            // Reiniciar lista
+            document.getElementById('productos').innerHTML = '';
+            currentIndex = 0;
+
+            if (productosFiltrados.length === 0) {
+              document.getElementById('productos').innerHTML =
+                '<p class="text-center col-span-3 text-green-500">No se encontraron productos.</p>';
+            } else {
+              loadMoreProducts(); // Mostrar los primeros filtrados
+            }
+          });
+
+
+
+
+            productos = results.data;
+            productosFiltrados = productos; // Inicialmente, no hay filtro
+            container = document.getElementById('productos');
             // console.log(productos)
             const obj = productos.find(p => p.Estado?.trim());
             const estado = obj?.Estado;
@@ -65,11 +181,42 @@
                 anuncioDiv.classList.remove('hidden');
             }
 
-            
+            loadMoreProducts(productos, container); // Carga inicial de 10 productos
+                     
+            // Mostrar productos y ocultar el spinner
+            document.getElementById('loader').style.display = 'none';
+            container.classList.remove('hidden');
 
-                    
-            // Mostrar los productos en el contenedor
-            productos.forEach(prod => {
+            // Mostrar la fecha de última actualización general (la fecha actual)
+            // const fechaActualizacion = new Date().toLocaleDateString(); // Fecha actual
+            // Buscar la primera fecha válida de actualización
+            // const filaConFecha = productos.find(p => p.FechaActualizacion?.trim());
+            const fechaActualizacion = obj?.FechaActualizacion || 'desconocida';
+            document.getElementById('fecha-actualizacion').textContent = `Última actualización: ${fechaActualizacion}`;
+          }
+        });
+      })
+      .catch(error => console.error('Error al obtener el CSV:', error));
+
+      window.addEventListener('scroll', () => {
+        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+        if (scrollTop + clientHeight >= scrollHeight - 5) {
+          if (currentIndex < productos.length) {
+            loadMoreProducts();
+          }
+        }
+      });
+
+
+  function loadMoreProducts() {
+      // Mostrar los productos en el contenedor
+      const scrollLoader = document.getElementById('scroll-loader');
+      scrollLoader.classList.remove('hidden');
+
+      // setTimeout(() => {}, 6000);
+      const product_slice = productosFiltrados.slice(currentIndex, currentIndex + pageSize);
+      product_slice.forEach(prod => {
                 
                 const card = document.createElement('div');
                 // card.className = 'bg-white rounded-2xl shadow p-4 border border-gray-200';
@@ -103,25 +250,15 @@
                 card.innerHTML += `
                     <h2 class="text-xl font-semibold text-green-800">${prod.Nombre}</h2>
                     <p class="text-gray-600 text-sm mb-2">${prod.Descripcion}</p>
-                    <p class="text-lg font-bold text-green-600">$${prod.Precio}</p>
+                    <p class="text-lg font-bold text-green-600">$${prod.Precio} CUP</p>
                 `;
                 container.appendChild(card);
             });
 
-            // Mostrar productos y ocultar el spinner
-            document.getElementById('loader').style.display = 'none';
-            container.classList.remove('hidden');
+      currentIndex += pageSize;
+      scrollLoader.classList.add('hidden');
+    }
 
-            // Mostrar la fecha de última actualización general (la fecha actual)
-            // const fechaActualizacion = new Date().toLocaleDateString(); // Fecha actual
-            // Buscar la primera fecha válida de actualización
-            // const filaConFecha = productos.find(p => p.FechaActualizacion?.trim());
-            const fechaActualizacion = obj?.FechaActualizacion || 'desconocida';
-            document.getElementById('fecha-actualizacion').textContent = `Última actualización: ${fechaActualizacion}`;
-          }
-        });
-      })
-      .catch(error => console.error('Error al obtener el CSV:', error));
   </script>
 </body>
 </html>
