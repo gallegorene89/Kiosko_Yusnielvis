@@ -10,28 +10,36 @@
 <body class="bg-gray-50 text-gray-800">
   <header class="bg-green-700 text-white py-4 shadow-md">
     <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
-      
+   
       <!-- Nombre del sitio -->
       <h1 class="text-2xl font-bold tracking-wide flex items-center space-x-2">
         <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
           <path d="M3 9l1-5h16l1 5v2a2 2 0 01-2 2v6a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3H9v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-6a2 2 0 01-2-2V9zM4.618 4L4 8h16l-.618-4H4.618z" />
         </svg>
-        <span>Kiosko "El Dinámico"</span>
+        <span>Kiosko "El Dinamiko"</span>
       </h1>
       
-      <!-- <h1 class="text-2xl font-bold tracking-wide">🍍 Kiosko "El Dinámico"</h1> -->
-      
       <!-- Eslogan o mensaje -->
-      <p class="text-sm sm:text-base text-green-100">¡Productos frescos, precios justos, cerca de ti!</p>
-      
-    </div>
-  </header>
-  
-    <!-- <div class="max-w-6xl mx-auto py-10 px-4">
-        <h1 class="text-3xl font-bold mb-6 text-center text-green-700">Kiosko "El Dinámico"</h1> -->
+      <p class="text-sm sm:text-base text-green-100 mx-5">¡Productos frescos, precios justos, cerca de ti!</p>
 
-    <!-- search productby nombre -->
-    <div class="relative max-w-md mx-auto mb-6">
+      <!-- search productby nombre -->
+      <div class="relative max-w-md mx-auto mt-4 sm:mt-0">
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+          🔍
+        </span>
+        <input
+          id="buscador"
+          type="text"
+          placeholder="Buscar producto..."
+          class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
+        />
+      </div>
+
+    <!-- Estado del kiosko (Abierto o Cerrado) -->
+    <div id="estadoKiosko" class="font-semibold mt-2 sm:mt-0 px-4 py-2 rounded-lg"></div>
+
+      <!-- search productby nombre -->
+    <!-- <div class="relative max-w-md mx-auto mb-6">
       <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
         🔍
       </span>
@@ -41,7 +49,10 @@
         placeholder="Buscar producto..."
         class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
       />
-    </div>
+    </div> -->
+  </header>
+
+    
     
   
         <!-- Spinner de carga -->
@@ -49,11 +60,10 @@
         <div class="animate-spin rounded-full h-10 w-10 border-t-4 border-green-600 border-opacity-50"></div>
         <span class="ml-3 text-green-600 font-medium">Cargando productos...</span>
     </div>
-    <div id="estadoKiosko" class="text-center text-xl font-bold mb-2"></div>
-    <div id="anuncio" class="hidden max-w-3xl mx-auto border border-red-300 bg-red-100 text-red-800 rounded-lg px-6 py-4 mb-6 text-center text-base font-semibold shadow-md"></div>
+    <div id="anuncio" class="hidden max-w-3xl mx-auto mt-6 border border-red-300 bg-red-100 text-red-800 rounded-lg px-4 py-4 mb-6 text-center text-sm font-semibold shadow-md"></div>
 
 
-    <!-- <div id="productos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div> -->
+    <h2 id="tituloProductos" class="text-2xl font-bold text-green-700 text-center mb-4 hidden">Nuestros productos</h2>
     <div id="productos" class="px-4 sm:px-0 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
 
     <!-- Sección para mostrar la fecha de actualización general -->
@@ -66,7 +76,7 @@
       <span class="ml-2 text-green-600 text-sm font-medium">Cargando más...</span>
     </div>
     
-    <footer class="bg-green-700 text-white mt-1">
+    <footer id="footer_id" class="bg-green-700 text-white mt-1 hidden">
       <div class="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
         
         <!-- Dirección -->
@@ -77,7 +87,7 @@
           </svg>
           <div>
             <p class="font-semibold">Dirección</p>
-            <p>Libertad 30, Aguada Pasajeros</p>
+            <p>Av. Libertad 30, Aguada Pasajeros</p>
           </div>
         </div>
     
@@ -99,7 +109,7 @@
           </svg>
           <div>
             <p class="font-semibold">Horario</p>
-            <p>Lunes a Sábado: 8:00 AM – 6:00 PM<br>Domingo: Cerrado</p>
+            <p>Lunes a Sábado: 8:00 AM – 6:00 PM<br>Domingo: 8:00 AM – 2:00 PM</p>
           </div>
         </div>
     
@@ -153,16 +163,13 @@
             }
           });
 
-
-
-
             productos = results.data;
             productosFiltrados = productos; // Inicialmente, no hay filtro
             container = document.getElementById('productos');
             // console.log(productos)
             const obj = productos.find(p => p.Estado?.trim());
             const estado = obj?.Estado;
-            console.log(obj)
+            // console.log(obj)
 
             // Mostrar estado
             const estadoDiv = document.getElementById('estadoKiosko');
@@ -170,8 +177,10 @@
                     ? '🟢 ABIERTO'
                     : '🔴 CERRADO';
                 estadoDiv.className = estado === 'a'
-                    ? 'text-green-600 text-center text-xl font-bold mb-4'
-                    : 'text-red-600 text-center text-xl font-bold mb-4';
+                    // ? 'text-green-600 text-center text-xl font-bold mb-4'
+                    // : 'text-red-600 text-center text-xl font-bold mb-4';
+                    ? 'bg-green-600 text-white font-bold text-xl px-4 py-2 rounded-lg shadow-lg border-1 border-green-800'
+                    : 'bg-green-600 text-white font-bold text-xl px-4 py-2 rounded-lg shadow-lg border-1 border-green-800';
 
             const anuncioDiv = document.getElementById('anuncio');
             const anuncioTexto = obj.Anuncio?.trim();
@@ -214,6 +223,9 @@
       const scrollLoader = document.getElementById('scroll-loader');
       scrollLoader.classList.remove('hidden');
 
+      document.getElementById('tituloProductos').classList.remove('hidden'); 
+      document.getElementById('footer_id').classList.remove('hidden');
+
       // setTimeout(() => {}, 6000);
       const product_slice = productosFiltrados.slice(currentIndex, currentIndex + pageSize);
       product_slice.forEach(prod => {
@@ -250,7 +262,7 @@
                 card.innerHTML += `
                     <h2 class="text-xl font-semibold text-green-800">${prod.Nombre}</h2>
                     <p class="text-gray-600 text-sm mb-2">${prod.Descripcion}</p>
-                    <p class="text-lg font-bold text-green-600">$${prod.Precio} CUP</p>
+                    <p class="text-lg font-bold text-green-600">$${prod.Precio}</p>
                 `;
                 container.appendChild(card);
             });
