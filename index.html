@@ -96,7 +96,7 @@
           </svg>
           <div>
             <p class="font-semibold">Dirección</p>
-            <p>Av. Libertad 30, Aguada Pasajeros</p>
+            <p>Av. Libertad 30, Aguada de Pasajeros</p>
           </div>
         </div>
     
@@ -107,7 +107,9 @@
           </svg>
           <div>
             <p class="font-semibold">Teléfono</p>
-            <p>+53 58786491</p>
+            <a href="https://wa.me/5358786491?text=Hola%2C%20vengo%20de%20tu%20website%20para%20hacer%20un%20pedido"  target="_blank" class="text-green-200 underline hover:text-white">
+              +53 58786491 (WhatsApp)
+            </a>
           </div>
         </div>
     
@@ -118,7 +120,7 @@
           </svg>
           <div>
             <p class="font-semibold">Horario</p>
-            <p>Lunes a Sábado: 8:00 AM – 6:00 PM<br>Domingo: 8:00 AM – 2:00 PM</p>
+            <p>Lunes a Sábado: 7:00 AM – 9:00 PM<br>Domingo: 7:00 AM – 8:00 PM</p>
           </div>
         </div>
     
@@ -127,7 +129,19 @@
         © 2025. Todos los derechos reservados.
       </div>
     </footer>
-    
+
+    <!-- WhatsApp Flotante -->
+    <div id="whatsappContainer" style="display: none;">
+        <a href="https://wa.me/5358786491?text=Hola%2C%20vengo%20de%20tu%20website%20para%20hacer%20un%20pedido"  
+          target="_blank" 
+          id="whatsappBtn"
+          class="fixed bottom-5 right-5 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg transition-all duration-300 hidden">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 32 32">
+            <path d="M19.11 17.54c-.27-.14-1.62-.8-1.87-.89-.25-.09-.43-.14-.61.14-.18.27-.7.88-.86 1.06-.16.18-.32.2-.6.07-.27-.14-1.12-.41-2.13-1.3-.79-.7-1.32-1.56-1.47-1.82-.15-.27-.02-.42.12-.55.13-.13.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47l-.52-.01c-.18 0-.47.07-.72.34s-.95.93-.95 2.26.98 2.63 1.11 2.81c.14.18 1.94 2.97 4.7 4.17.66.28 1.17.45 1.56.58.66.21 1.26.18 1.74.11.53-.08 1.62-.66 1.85-1.3.23-.63.23-1.17.16-1.3-.07-.12-.25-.2-.52-.34zM16.02 3C9.37 3 4 8.37 4 15.02c0 2.65.86 5.1 2.31 7.09L4 29l7.18-2.31c1.91 1.29 4.21 2.03 6.84 2.03 6.65 0 12.02-5.37 12.02-12.02C30.02 8.37 24.65 3 18.02 3zM16.02 26.93c-2.2 0-4.23-.64-5.94-1.74l-.43-.28-4.27 1.38 1.4-4.16-.28-.44c-1.17-1.76-1.84-3.86-1.84-6.14 0-6.04 4.9-10.93 10.93-10.93s10.93 4.9 10.93 10.93-4.9 10.93-10.93 10.93z"/>
+          </svg>
+        </a>
+    </div>
+       
   
 
   <script>
@@ -145,6 +159,13 @@
     let productosFiltrados = [];
     let currentIndex = 0;
     const pageSize = 1000;
+
+  // const whatsappBtn = document.getElementById('whatsappBtn');
+  const whatsappContainer = document.getElementById('whatsappContainer');
+  const footer = document.getElementById('footer_id');
+  window.addEventListener('scroll', checkOverlap);
+  window.addEventListener('resize', checkOverlap);
+  window.addEventListener('load', checkOverlap);
 
     fetch(urlCSV)
       .then(response => response.text())
@@ -199,7 +220,10 @@
                 anuncioDiv.classList.remove('hidden');
             }
 
-            loadMoreProducts(productos, container); // Carga inicial de 10 productos
+            loadMoreProducts(); // Carga inicial de 10 productos
+            // mostrar icono de whatsapp
+            whatsappContainer.style.display = 'block';
+            
                      
             // Mostrar productos y ocultar el spinner
             document.getElementById('loader').style.display = 'none';
@@ -252,7 +276,7 @@
                 const imageElement = document.createElement('img');
                 imageElement.src = imageSrc;
                 imageElement.alt = prod.Nombre;
-                imageElement.className = 'h-60 w-full object-cover rounded-md mb-3';
+                imageElement.className = 'h-60 w-full object-contain rounded-md mb-3';
 
                 // Agregar etiqueta si existe en el CSV
                 // Color de fondo dinámico desde la hoja de cálculo
@@ -279,7 +303,26 @@
       currentIndex += pageSize;
       scrollLoader.classList.add('hidden');
     }
+  
+  function checkOverlap() {
+    const whatsappBtn = document.getElementById('whatsappBtn');
+    const footer = document.getElementById('footer_id');
 
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          whatsappBtn.style.display = 'none';
+        } else {
+          whatsappBtn.style.display = 'block';
+        }
+      });
+    }, {
+      root: null, // viewport
+      threshold: 0 // en cuanto un píxel del footer aparece
+    });
+
+    observer.observe(footer);
+  }
   </script>
 </body>
 </html>
