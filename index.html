@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kiosko - Productos</title>
+  <title>El Dinamiko | Kiosko</title>
+  <!-- <link type="image/png" rel="icon" href="https://img.icons8.com/external-kmg-design-glyph-kmg-design/16/external-store-grocery-kmg-design-glyph-kmg-design.png"> -->
+  <link type="image/png" rel="icon" href="https://img.icons8.com/ios/50/stall.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <!-- Google tag (gtag.js) -->
@@ -47,18 +49,6 @@
     <!-- Estado del kiosko (Abierto o Cerrado) -->
     <div id="estadoKiosko" class="font-semibold mt-2 sm:mt-0 px-4 py-2 rounded-lg"></div>
 
-      <!-- search productby nombre -->
-    <!-- <div class="relative max-w-md mx-auto mb-6">
-      <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
-        🔍
-      </span>
-      <input
-        id="buscador"
-        type="text"
-        placeholder="Buscar producto..."
-        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-      />
-    </div> -->
   </header>
 
     
@@ -72,7 +62,7 @@
     <div id="anuncio" class="hidden max-w-3xl mx-auto mt-6 border border-red-300 bg-red-100 text-red-800 rounded-lg px-4 py-4 mb-6 text-center text-sm font-semibold shadow-md"></div>
 
 
-    <h2 id="tituloProductos" class="text-2xl font-bold text-green-700 text-center mb-4 hidden">Nuestros productos</h2>
+    <h2 id="tituloProductos" class="text-2xl font-bold text-green-700 text-center my-4 hidden">Nuestros productos</h2>
     <div id="productos" class="px-4 sm:px-0 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
 
     <!-- Sección para mostrar la fecha de actualización general -->
@@ -145,14 +135,18 @@
   
 
   <script>
-    const baseCSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSdGJb4kwwP4q1T67lsBinMWC7zey_K8j3wtLwn8jGqz13Srnd3EmdmtUAO_EbgUCVr3ewFJVv7YG2y/pub?gid=0&single=true&output=csv';
-    const urlCSV = `${baseCSV}&cacheBust=${Date.now()}`;
+    // const baseCSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSdGJb4kwwP4q1T67lsBinMWC7zey_K8j3wtLwn8jGqz13Srnd3EmdmtUAO_EbgUCVr3ewFJVv7YG2y/pub?output=csv';
+    const baseCSVtabproducts = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4ctMV-8Xpe3jmtsXhq5YGTDwtM47Z9bu-TrZBkQHAtXuSSpKiwWNInJDDUWhBI2Z2s27o_uPYtu8e/pub?gid=0&single=true&output=csv'  // 442603261 tab 2  
+    
+    const baseCSVtabinfo = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4ctMV-8Xpe3jmtsXhq5YGTDwtM47Z9bu-TrZBkQHAtXuSSpKiwWNInJDDUWhBI2Z2s27o_uPYtu8e/pub?gid=442603261&single=true&output=csv'
+    const urlCSVinfo = `${baseCSVtabinfo}&cacheBust=${Date.now()}`;
+    const urlCSVproducts = `${baseCSVtabproducts}&cacheBust=${Date.now()}`;
     
     // Mapa de colores permitidos en Tailwind
     const colorMap = {
-          Azul: 'bg-blue-500',
-          Red: 'bg-red-500',
-          Gris: 'bg-gray-500'
+          azul: 'bg-blue-500',
+          red: 'bg-red-500',
+          gris: 'bg-gray-500'
     };
  
     let container, productos = [];
@@ -167,78 +161,90 @@
   window.addEventListener('resize', checkOverlap);
   window.addEventListener('load', checkOverlap);
 
-    fetch(urlCSV)
-      .then(response => response.text())
-      .then(csvText => {
-        Papa.parse(csvText, {
-          header: true,
-          skipEmptyLines: true,
-          complete: function(results) {
-            document.getElementById('buscador').addEventListener('input', function (e) {
-            const valor = e.target.value.toLowerCase().trim();
-            productosFiltrados = productos.filter(p =>
-              // p.Nombre?.toLowerCase().includes(valor)
-              p.Nombre?.toLowerCase().startsWith(valor)
-            );
+  fetch(urlCSVinfo)
+    .then(response => response.text())
+    .then(csvText => {
+      Papa.parse(csvText, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
 
-            // Reiniciar lista
-            document.getElementById('productos').innerHTML = '';
-            currentIndex = 0;
+          info = results.data;
+          // console.log(info);
+          const estado = info.find(item => item.Tipo === "Estado")?.Descripcion;
+          const anuncioTexto = info.find(item => item.Tipo === "Anuncio")?.Descripcion;
 
-            if (productosFiltrados.length === 0) {
-              document.getElementById('productos').innerHTML =
-                '<p class="text-center col-span-3 text-green-500">No se encontraron productos.</p>';
-            } else {
-              loadMoreProducts(); // Mostrar los primeros filtrados
-            }
-          });
+          // Mostrar estado
+          const estadoDiv = document.getElementById('estadoKiosko');
+              estadoDiv.textContent = estado === 'a'
+                  ? '🟢 ABIERTO'
+                  : '🔴 CERRADO';
+              estadoDiv.className = estado === 'a'
+                  // ? 'text-green-600 text-center text-xl font-bold mb-4'
+                  // : 'text-red-600 text-center text-xl font-bold mb-4';
+                  ? 'bg-green-600 text-white font-bold text-xl px-4 py-2 rounded-lg shadow-lg border-1 border-green-800'
+                  : 'bg-green-600 text-white font-bold text-xl px-4 py-2 rounded-lg shadow-lg border-1 border-green-800';
 
-            productos = results.data;
-            productosFiltrados = productos; // Inicialmente, no hay filtro
-            container = document.getElementById('productos');
-            // console.log(productos)
-            const obj = productos.find(p => p.Estado?.trim());
-            const estado = obj?.Estado;
-            // console.log(obj)
+          const anuncioDiv = document.getElementById('anuncio');
+          if (anuncioTexto) {
+              anuncioDiv.textContent = anuncioTexto;
+              anuncioDiv.classList.remove('hidden');
+          }
 
-            // Mostrar estado
-            const estadoDiv = document.getElementById('estadoKiosko');
-                estadoDiv.textContent = estado === 'a'
-                    ? '🟢 ABIERTO'
-                    : '🔴 CERRADO';
-                estadoDiv.className = estado === 'a'
-                    // ? 'text-green-600 text-center text-xl font-bold mb-4'
-                    // : 'text-red-600 text-center text-xl font-bold mb-4';
-                    ? 'bg-green-600 text-white font-bold text-xl px-4 py-2 rounded-lg shadow-lg border-1 border-green-800'
-                    : 'bg-green-600 text-white font-bold text-xl px-4 py-2 rounded-lg shadow-lg border-1 border-green-800';
+          const fechaActualizacion = info.find(item => item.Tipo === "FechaActualizacion")?.Descripcion || 'desconocida';
+          document.getElementById('fecha-actualizacion').textContent = `Última actualización: ${fechaActualizacion}`;
 
-            const anuncioDiv = document.getElementById('anuncio');
-            const anuncioTexto = obj.Anuncio?.trim();
-
-            if (anuncioTexto) {
-                anuncioDiv.textContent = anuncioTexto;
-                anuncioDiv.classList.remove('hidden');
-            }
-
-            loadMoreProducts(); // Carga inicial de 10 productos
-            // mostrar icono de whatsapp
-            whatsappContainer.style.display = 'block';
-            
-                     
-            // Mostrar productos y ocultar el spinner
-            document.getElementById('loader').style.display = 'none';
-            container.classList.remove('hidden');
-
-            // Mostrar la fecha de última actualización general (la fecha actual)
-            // const fechaActualizacion = new Date().toLocaleDateString(); // Fecha actual
-            // Buscar la primera fecha válida de actualización
-            // const filaConFecha = productos.find(p => p.FechaActualizacion?.trim());
-            const fechaActualizacion = obj?.FechaActualizacion || 'desconocida';
-            document.getElementById('fecha-actualizacion').textContent = `Última actualización: ${fechaActualizacion}`;
           }
         });
       })
-      .catch(error => console.error('Error al obtener el CSV:', error));
+      .catch(error => console.error('Error al obtener el CSVinfo:', error));
+  
+  
+  fetch(urlCSVproducts)
+    .then(response => response.text())
+    .then(csvText => {
+      Papa.parse(csvText, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          document.getElementById('buscador').addEventListener('input', function (e) {
+          const valor = e.target.value.toLowerCase().trim();
+          productosFiltrados = productos.filter(p =>
+            p.Nombre?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(valor.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))  // no tiene en cuenta las tildes
+            // p.Nombre?.toLowerCase().includes(valor)
+            // p.Nombre?.toLowerCase().startsWith(valor)
+          );
+
+          // Reiniciar lista
+          document.getElementById('productos').innerHTML = '';
+          currentIndex = 0;
+
+          if (productosFiltrados.length === 0) {
+            document.getElementById('productos').innerHTML =
+              '<p class="text-center col-span-3 text-green-500">No se encontraron productos.</p>';
+          } else {
+            loadMoreProducts(); // Mostrar los primeros filtrados
+          }
+        });
+
+          productos = results.data;
+          // console.log(productos);
+
+          productosFiltrados = productos; // Inicialmente, no hay filtro
+          container = document.getElementById('productos');
+
+          loadMoreProducts(); // Carga inicial de 10 productos
+          // mostrar icono de whatsapp
+          whatsappContainer.style.display = 'block';
+                 
+          // Mostrar productos y ocultar el spinner
+          document.getElementById('loader').style.display = 'none';
+          container.classList.remove('hidden');
+
+        }
+      });
+    })
+    .catch(error => console.error('Error al obtener el CSVproducts:', error));
 
       window.addEventListener('scroll', () => {
         const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
@@ -278,10 +284,14 @@
                 imageElement.alt = prod.Nombre;
                 imageElement.className = 'h-60 w-full object-contain rounded-md mb-3';
 
+                imageElement.onerror = () => {
+                    imageElement.src = 'fotos/no_imagen.jpg';
+                  };
+
                 // Agregar etiqueta si existe en el CSV
                 // Color de fondo dinámico desde la hoja de cálculo
-                const colorClase = colorMap[prod.Color?.trim()] || 'bg-gray-500'
-                if (prod.Etiqueta?.trim()) {
+                const colorClase = colorMap[prod.Color?.toLowerCase().trim()] || 'bg-gray-500'
+                if (prod.Etiqueta?.toLowerCase().trim()) {
                     const etiqueta = document.createElement('span');
                     etiqueta.textContent = prod.Etiqueta;
                     // etiqueta.className = 'absolute top-2 left-2 bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow';
@@ -331,3 +341,4 @@
 
 <!-- fotos/malta_bucanero.webp -->
 <!-- Promo 2x1 a partir de las 2 PM -->
+ <!-- Recién abrimos, ven a conocernos. -->
