@@ -4,341 +4,726 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>El Dinamiko | Kiosko</title>
-  <!-- <link type="image/png" rel="icon" href="https://img.icons8.com/external-kmg-design-glyph-kmg-design/16/external-store-grocery-kmg-design-glyph-kmg-design.png"> -->
   <link type="image/png" rel="icon" href="https://img.icons8.com/ios/50/stall.png">
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- PapaParse -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  
+  <!-- Google Fonts: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-B5W8KVXMZK"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-  
     gtag('config', 'G-B5W8KVXMZK');
   </script>
+
+  <style>
+    body { font-family: 'Outfit', sans-serif; }
+    .product-card { transition: all 0.3s ease; }
+    .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
+    
+    /* Estilo lista limpia */
+    .list-row-item { transition: background-color 0.2s ease; }
+    .list-row-item:hover { background-color: #f0fdf4; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; }
+    ::-webkit-scrollbar-thumb { background: #15803d; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #14532d; }
+
+    /* Animación Carrito */
+    .cart-panel { transition: transform 0.3s ease-in-out; }
+    .cart-open .cart-panel { transform: translateX(0); }
+    .cart-closed .cart-panel { transform: translateX(100%); }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
-  <header class="bg-green-700 text-white py-4 shadow-md">
-    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
-   
-      <!-- Nombre del sitio -->
-      <h1 class="text-2xl font-bold tracking-wide flex items-center space-x-2">
-        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M3 9l1-5h16l1 5v2a2 2 0 01-2 2v6a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3H9v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-6a2 2 0 01-2-2V9zM4.618 4L4 8h16l-.618-4H4.618z" />
-        </svg>
-        <span>Kiosko "El Dinamiko"</span>
-      </h1>
-      
-      <!-- Eslogan o mensaje -->
-      <p class="text-sm sm:text-base text-green-100 mx-5">¡Productos frescos, precios justos, cerca de ti!</p>
 
-      <!-- search productby nombre -->
-      <div class="relative max-w-md mx-auto mt-4 sm:mt-0">
-        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
-          🔍
-        </span>
-        <input
-          id="buscador"
-          type="text"
-          placeholder="Buscar producto..."
-          class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
-        />
-      </div>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen pt-[145px] sm:pt-[120px]"> 
 
-    <!-- Estado del kiosko (Abierto o Cerrado) -->
-    <div id="estadoKiosko" class="font-semibold mt-2 sm:mt-0 px-4 py-2 rounded-lg"></div>
+  <!-- HEADER FIXED -->
+  <header class="fixed top-0 left-0 right-0 z-40 shadow-lg">
+    <!-- Parte Superior -->
+    <div class="bg-green-700 text-white px-4 py-3 border-b border-green-800">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6">
+            
+            <div class="flex w-full md:w-auto justify-between items-center">
+                <!-- Logo -->
+                <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                    <div class="bg-white p-1.5 rounded-full shadow-md">
+                        <svg class="w-5 h-5 text-green-700" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9l1-5h16l1 5v2a2 2 0 01-2 2v6a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3H9v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-6a2 2 0 01-2-2V9zM4.618 4L4 8h16l-.618-4H4.618z" /></svg>
+                    </div>
+                    <h1 class="text-xl font-bold tracking-tight">El Dinamiko</h1>
+                </div>
 
+                <!-- Botón Carrito MÓVIL y Estado -->
+                <div class="flex items-center gap-3 md:hidden">
+                    <div id="estadoKioskoMovil"></div>
+                    <button onclick="toggleCart()" class="relative p-2 bg-green-800 rounded-full hover:bg-green-600 transition">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <span id="cart-count-mobile" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Buscador -->
+            <div class="relative w-full md:max-w-md">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </span>
+                
+                <!-- Input Buscador -->
+                <input id="buscador" type="text" placeholder="Buscar productos..." class="w-full pl-9 pr-10 py-2 bg-green-50 text-gray-900 text-sm rounded-full shadow-inner focus:outline-none focus:ring-2 focus:ring-green-300 transition-all" />
+                
+                <!-- Botón X para borrar búsqueda -->
+                <button id="btnBorrarBusqueda" onclick="limpiarBusqueda()" class="absolute inset-y-0 right-0 pr-3 flex items-center hidden text-gray-400 hover:text-gray-600 focus:outline-none transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Estado y Carrito DESKTOP -->
+            <div class="hidden md:flex items-center gap-4 min-w-fit">
+                <div id="estadoKioskoDesktop"></div>
+                <button onclick="toggleCart()" class="flex items-center gap-2 bg-green-800 hover:bg-green-600 px-4 py-2 rounded-full transition text-sm font-semibold shadow-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <span>Carrito</span>
+                    <span id="cart-count-desktop" class="bg-white text-green-800 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra informativa -->
+    <div class="bg-green-800 text-green-100 text-xs sm:text-sm py-1.5 shadow-md relative z-30">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-1">
+            <p id="eslogan-texto" class="font-medium tracking-wide italic">¡Productos frescos, precios justos, cerca de ti!</p>
+            <div class="flex items-center gap-1 opacity-80 text-[10px] sm:text-xs bg-green-900/30 px-2 py-0.5 rounded">
+                <span id="fecha-actualizacion">Actualizando...</span>
+            </div>
+        </div>
+    </div>
   </header>
 
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="flex-grow max-w-7xl mx-auto w-full px-3 py-6 sm:px-6 lg:px-8">
     
-    
-  
-        <!-- Spinner de carga -->
-    <div id="loader" class="flex justify-center items-center my-10">
-        <div class="animate-spin rounded-full h-10 w-10 border-t-4 border-green-600 border-opacity-50"></div>
-        <span class="ml-3 text-green-600 font-medium">Cargando productos...</span>
-    </div>
-    <div id="anuncio" class="hidden max-w-3xl mx-auto mt-6 border border-red-300 bg-red-100 text-red-800 rounded-lg px-4 py-4 mb-6 text-center text-sm font-semibold shadow-md"></div>
-
-
-    <h2 id="tituloProductos" class="text-2xl font-bold text-green-700 text-center my-4 hidden">Nuestros productos</h2>
-    <div id="productos" class="px-4 sm:px-0 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
-
-    <!-- Sección para mostrar la fecha de actualización general -->
-    <p class="text-center text-sm text-gray-500 mt-6" id="fecha-actualizacion"></p>
+    <!-- Alerta -->
+    <div id="anuncio" class="hidden mb-8 rounded-lg border-l-4 border-red-500 bg-red-50 p-4 shadow-sm mx-auto max-w-3xl transition-all">
+        <div class="flex items-center space-x-3 text-red-800">
+            <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <p id="anuncio-texto" class="text-sm font-semibold"></p>
+        </div>
     </div>
 
-    <!-- mini spinner para carga progresiva de productos -->
-    <div id="scroll-loader" class="hidden flex justify-center items-center my-8">
-      <div class="animate-spin rounded-full h-6 w-6 border-t-4 border-green-500 border-opacity-50"></div>
-      <span class="ml-2 text-green-600 text-sm font-medium">Cargando más...</span>
+    <!-- Loader -->
+    <div id="loader" class="flex flex-col justify-center items-center my-20">
+        <div class="animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-green-600"></div>
+        <span class="mt-3 text-green-700 font-medium text-sm animate-pulse">Cargando catálogo...</span>
     </div>
+
+    <!-- Header Catálogo -->
+    <div id="tituloProductosContainer" class="hidden flex flex-col items-center justify-center mb-8 text-center">
+       <h2 class="text-2xl sm:text-3xl font-bold text-green-800 tracking-tight">Catálogo Disponible</h2>
+       <span class="mt-2 inline-block px-3 py-1 rounded-md bg-yellow-100 text-yellow-800 text-xs sm:text-sm font-semibold border border-yellow-200 shadow-sm">
+         ⚠️ El total es estimado, confirma stock por WhatsApp
+       </span>
+    </div>
+
+    <!-- GRID PRINCIPAL (Productos con Foto) -->
+    <div id="productos" class="hidden grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 mb-6"></div>
     
-    <footer id="footer_id" class="bg-green-700 text-white mt-1 hidden">
-      <div class="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
+    <!-- Botón Cargar Más (Grid) -->
+    <div id="btn-load-grid-container" class="hidden flex justify-center mb-12">
+        <button onclick="loadNextGridPage()" class="flex items-center gap-2 bg-white border border-green-300 text-green-700 hover:bg-green-50 px-6 py-2.5 rounded-full font-semibold shadow-sm transition-all">
+            <span>Ver más productos</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+    </div>
+
+    <!-- LISTA LIGERA (Sin Foto) -->
+    <div id="seccion-lista" class="hidden max-w-4xl mx-auto mt-10">
+        <div class="flex items-center gap-2 mb-4 border-b border-gray-200 pb-2">
+            <svg class="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            <h3 class="text-xl font-bold text-gray-700">Otras Ofertas</h3>
+        </div>
+        <div id="productos-lista" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6"></div>
         
-        <!-- Dirección -->
-        <div class="flex items-start space-x-3">
-          <svg class="w-5 h-5 mt-1 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 12.414a4 4 0 10-5.657 5.657l4.243 4.243a1 1 0 001.414 0l4.243-4.243a1 1 0 000-1.414z" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          <div>
-            <p class="font-semibold">Dirección</p>
-            <p>Av. Libertad 30, Aguada de Pasajeros</p>
-          </div>
+        <!-- Botón Cargar Más (Lista) -->
+        <div id="btn-load-list-container" class="hidden flex justify-center mb-6">
+            <button onclick="loadNextListPage()" class="flex items-center gap-2 bg-white border border-green-300 text-green-700 hover:bg-green-50 px-6 py-2.5 rounded-full font-semibold shadow-sm transition-all">
+                <span>Cargar más ofertas</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
         </div>
-    
-        <!-- Teléfono -->
-        <div class="flex items-start space-x-3">
-          <svg class="w-5 h-5 mt-1 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h1.6a1 1 0 011 .77l1.2 5a1 1 0 01-.25.92L7 12l3 3 1.3-1.3a1 1 0 01.92-.25l5 1.2a1 1 0 01.77 1V19a2 2 0 01-2 2h-1A16 16 0 013 5z" />
-          </svg>
-          <div>
-            <p class="font-semibold">Teléfono</p>
-            <a href="https://wa.me/5358786491?text=Hola%2C%20vengo%20de%20tu%20website%20para%20hacer%20un%20pedido"  target="_blank" class="text-green-200 underline hover:text-white">
-              +53 58786491 (WhatsApp)
-            </a>
-          </div>
-        </div>
-    
-        <!-- Horarios -->
-        <div class="flex items-start space-x-3">
-          <svg class="w-5 h-5 mt-1 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2m4-2a8 8 0 11-8-8 8 8 0 018 8z" />
-          </svg>
-          <div>
-            <p class="font-semibold">Horario</p>
-            <p>Lunes a Sábado: 7:00 AM – 9:00 PM<br>Domingo: 7:00 AM – 8:00 PM</p>
-          </div>
-        </div>
-    
-      </div>
-      <div class="text-center text-xs text-white bg-green-800 py-3">
-        © 2025. Todos los derechos reservados.
-      </div>
-    </footer>
-
-    <!-- WhatsApp Flotante -->
-    <div id="whatsappContainer" style="display: none;">
-        <a href="https://wa.me/5358786491?text=Hola%2C%20vengo%20de%20tu%20website%20para%20hacer%20un%20pedido"  
-          target="_blank" 
-          id="whatsappBtn"
-          class="fixed bottom-5 right-5 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg transition-all duration-300 hidden">
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 32 32">
-            <path d="M19.11 17.54c-.27-.14-1.62-.8-1.87-.89-.25-.09-.43-.14-.61.14-.18.27-.7.88-.86 1.06-.16.18-.32.2-.6.07-.27-.14-1.12-.41-2.13-1.3-.79-.7-1.32-1.56-1.47-1.82-.15-.27-.02-.42.12-.55.13-.13.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47l-.52-.01c-.18 0-.47.07-.72.34s-.95.93-.95 2.26.98 2.63 1.11 2.81c.14.18 1.94 2.97 4.7 4.17.66.28 1.17.45 1.56.58.66.21 1.26.18 1.74.11.53-.08 1.62-.66 1.85-1.3.23-.63.23-1.17.16-1.3-.07-.12-.25-.2-.52-.34zM16.02 3C9.37 3 4 8.37 4 15.02c0 2.65.86 5.1 2.31 7.09L4 29l7.18-2.31c1.91 1.29 4.21 2.03 6.84 2.03 6.65 0 12.02-5.37 12.02-12.02C30.02 8.37 24.65 3 18.02 3zM16.02 26.93c-2.2 0-4.23-.64-5.94-1.74l-.43-.28-4.27 1.38 1.4-4.16-.28-.44c-1.17-1.76-1.84-3.86-1.84-6.14 0-6.04 4.9-10.93 10.93-10.93s10.93 4.9 10.93 10.93-4.9 10.93-10.93 10.93z"/>
-          </svg>
-        </a>
     </div>
-       
-  
+
+    <div id="sin-resultados" class="hidden text-center py-12">
+        <p class="text-gray-400 text-lg">No encontramos productos con ese nombre 🧐</p>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer id="footer_id" class="bg-gray-900 text-gray-300 mt-auto hidden">
+    <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+      <div class="space-y-3">
+        <h3 class="text-white text-lg font-bold flex items-center gap-2">El Dinamiko</h3>
+        <p class="text-gray-400 leading-relaxed">Tu mejor opción en Aguada de Pasajeros.</p>
+      </div>
+      <div class="space-y-4">
+        <h4 class="text-white font-semibold uppercase tracking-wider text-xs">Contacto</h4>
+        <div class="flex items-start space-x-3">
+          <svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 12.414a4 4 0 10-5.657 5.657l4.243 4.243a1 1 0 001.414 0l4.243-4.243a1 1 0 000-1.414z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+          <span>Av. Libertad 30,<br>Aguada de Pasajeros</span>
+        </div>
+        <div class="flex items-center space-x-3">
+            <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h1.6a1 1 0 011 .77l1.2 5a1 1 0 01-.25.92L7 12l3 3 1.3-1.3a1 1 0 01.92-.25l5 1.2a1 1 0 01.77 1V19a2 2 0 01-2 2h-1A16 16 0 013 5z" /></svg>
+            <a href="https://wa.me/5358786491" target="_blank" class="hover:text-white transition">+53 58786491</a>
+        </div>
+      </div>
+      <div class="space-y-3">
+        <h4 class="text-white font-semibold uppercase text-xs tracking-wider">Horario</h4>
+        <ul class="space-y-1 text-gray-400">
+            <li class="flex justify-between border-b border-gray-800 pb-1"><span>Lun - Sáb:</span> <span class="text-white">7AM – 9PM</span></li>
+            <li class="flex justify-between border-b border-gray-800 pb-1"><span>Domingo:</span> <span class="text-white">7AM – 8PM</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bg-black/30 py-3 text-center text-xs text-gray-600">&copy; 2025 Kiosko El Dinamiko.</div>
+  </footer>
+
+  <!-- MODAL CARRITO -->
+  <div id="cartModal" class="fixed inset-0 z-[60] hidden cart-closed">
+      <!-- Overlay Oscuro -->
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity opacity-0" id="cartOverlay" onclick="toggleCart()"></div>
+      
+      <!-- Panel Lateral -->
+      <div class="cart-panel absolute right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl flex flex-col h-full">
+          
+          <!-- Header Carrito -->
+          <div class="bg-green-700 text-white px-5 py-4 flex justify-between items-center shadow-md">
+              <div class="flex items-center gap-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <h2 class="text-xl font-bold">Tu Pedido</h2>
+              </div>
+              
+              <div class="flex items-center gap-4">
+                  <!-- Botón vaciar llama a askClearCart -->
+                  <button onclick="askClearCart()" class="text-white/80 hover:text-red-200 transition flex items-center gap-1 text-xs font-medium bg-green-800/50 px-2 py-1 rounded" title="Vaciar carrito">
+                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                     Vaciar
+                  </button>
+
+                  <button onclick="toggleCart()" class="text-white/80 hover:text-white transition">
+                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                  </button>
+              </div>
+          </div>
+
+          <!-- Lista de Items -->
+          <div class="flex-grow overflow-y-auto p-4 space-y-4" id="cartItemsContainer">
+              <!-- Se llena con JS -->
+              <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                  <svg class="w-16 h-16 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                  <p>Tu carrito está vacío</p>
+              </div>
+          </div>
+
+          <!-- Footer Carrito (Total + Botón) -->
+          <div class="border-t border-gray-200 p-5 bg-gray-50">
+              <div class="flex justify-between items-center mb-4 text-lg font-bold text-gray-800">
+                  <span>Total Estimado:</span>
+                  <span id="cartTotal" class="text-green-700">$0</span>
+              </div>
+              <button id="btnCheckout" onclick="checkout()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-bold shadow-lg transition-colors flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                  Solicitar por WhatsApp
+              </button>
+              <p class="text-xs text-center text-gray-400 mt-2">Se abrirá WhatsApp con el detalle de tu pedido.</p>
+          </div>
+      </div>
+  </div>
+
+  <!-- MODAL DE CONFIRMACIÓN (VACIAR CARRITO) -->
+  <div id="confirmModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden transform transition-all scale-100">
+          <div class="p-6 text-center">
+              <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                  <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+              </div>
+              <h3 class="text-lg leading-6 font-bold text-gray-900" id="modal-title">¿Vaciar el carrito?</h3>
+              <div class="mt-2">
+                  <p class="text-sm text-gray-500">Estás a punto de eliminar todos los productos de tu pedido. Esta acción no se puede deshacer.</p>
+              </div>
+          </div>
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+              <button onclick="confirmClearCart()" type="button" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none sm:w-auto sm:text-sm">
+                  Sí, vaciar
+              </button>
+              <button onclick="closeConfirmModal()" type="button" class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm">
+                  Cancelar
+              </button>
+          </div>
+      </div>
+  </div>
+
+  <!-- WhatsApp Flotante (General) -->
+  <div id="whatsappContainer">
+      <a href="https://wa.me/5358786491?text=Hola%2C%20tengo%20una%20consulta%20general"  
+        target="_blank" 
+        id="whatsappBtn"
+        class="fixed bottom-6 right-6 z-30 bg-green-500 hover:bg-green-600 text-white rounded-full p-3.5 shadow-2xl transition-all duration-300 hover:scale-110 flex items-center justify-center ring-4 ring-green-500/20">
+        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 32 32"><path d="M19.11 17.54c-.27-.14-1.62-.8-1.87-.89-.25-.09-.43-.14-.61.14-.18.27-.7.88-.86 1.06-.16.18-.32.2-.6.07-.27-.14-1.12-.41-2.13-1.3-.79-.7-1.32-1.56-1.47-1.82-.15-.27-.02-.42.12-.55.13-.13.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47l-.52-.01c-.18 0-.47.07-.72.34s-.95.93-.95 2.26.98 2.63 1.11 2.81c.14.18 1.94 2.97 4.7 4.17.66.28 1.17.45 1.56.58.66.21 1.26.18 1.74.11.53-.08 1.62-.66 1.85-1.3.23-.63.23-1.17.16-1.3-.07-.12-.25-.2-.52-.34zM16.02 3C9.37 3 4 8.37 4 15.02c0 2.65.86 5.1 2.31 7.09L4 29l7.18-2.31c1.91 1.29 4.21 2.03 6.84 2.03 6.65 0 12.02-5.37 12.02-12.02C30.02 8.37 24.65 3 18.02 3zM16.02 26.93c-2.2 0-4.23-.64-5.94-1.74l-.43-.28-4.27 1.38 1.4-4.16-.28-.44c-1.17-1.76-1.84-3.86-1.84-6.14 0-6.04 4.9-10.93 10.93-10.93s10.93 4.9 10.93 10.93-4.9 10.93-10.93 10.93z"/></svg>
+      </a>
+  </div>
+
+  <!-- Toast Notificación -->
+  <div id="toast" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg text-sm transition-all duration-300 opacity-0 translate-y-10 pointer-events-none z-50 flex items-center gap-2">
+      <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+      <span>Agregado al carrito</span>
+  </div>
 
   <script>
-    // const baseCSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSdGJb4kwwP4q1T67lsBinMWC7zey_K8j3wtLwn8jGqz13Srnd3EmdmtUAO_EbgUCVr3ewFJVv7YG2y/pub?output=csv';
-    const baseCSVtabproducts = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4ctMV-8Xpe3jmtsXhq5YGTDwtM47Z9bu-TrZBkQHAtXuSSpKiwWNInJDDUWhBI2Z2s27o_uPYtu8e/pub?gid=0&single=true&output=csv'  // 442603261 tab 2  
+    // --- VARIABLES ---
+    const baseCSVtabproducts = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4ctMV-8Xpe3jmtsXhq5YGTDwtM47Z9bu-TrZBkQHAtXuSSpKiwWNInJDDUWhBI2Z2s27o_uPYtu8e/pub?gid=0&single=true&output=csv';
+    const baseCSVtabinfo = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4ctMV-8Xpe3jmtsXhq5YGTDwtM47Z9bu-TrZBkQHAtXuSSpKiwWNInJDDUWhBI2Z2s27o_uPYtu8e/pub?gid=442603261&single=true&output=csv';
     
-    const baseCSVtabinfo = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4ctMV-8Xpe3jmtsXhq5YGTDwtM47Z9bu-TrZBkQHAtXuSSpKiwWNInJDDUWhBI2Z2s27o_uPYtu8e/pub?gid=442603261&single=true&output=csv'
     const urlCSVinfo = `${baseCSVtabinfo}&cacheBust=${Date.now()}`;
     const urlCSVproducts = `${baseCSVtabproducts}&cacheBust=${Date.now()}`;
     
-    // Mapa de colores permitidos en Tailwind
     const colorMap = {
-          azul: 'bg-blue-500',
-          red: 'bg-red-500',
-          gris: 'bg-gray-500'
+          azul: 'bg-blue-600',
+          red: 'bg-red-600',
+          gris: 'bg-gray-600',
+          verde: 'bg-green-600',
+          amarillo: 'bg-yellow-500 text-yellow-900'
     };
  
-    let container, productos = [];
-    let productosFiltrados = [];
-    let currentIndex = 0;
-    const pageSize = 1000;
+    let productosConFoto = [], productosConFotoFiltrados = [];
+    let productosLista = [], productosListaFiltrados = [];
+    let cart = []; 
 
-  // const whatsappBtn = document.getElementById('whatsappBtn');
-  const whatsappContainer = document.getElementById('whatsappContainer');
-  const footer = document.getElementById('footer_id');
-  window.addEventListener('scroll', checkOverlap);
-  window.addEventListener('resize', checkOverlap);
-  window.addEventListener('load', checkOverlap);
+    // Control de Paginación
+    let containerGrid, containerLista;
+    let currentGridIndex = 0;
+    let currentListIndex = 0;
+    const pageSize = 10; // Modificado a 10 items
 
-  fetch(urlCSVinfo)
-    .then(response => response.text())
-    .then(csvText => {
-      Papa.parse(csvText, {
-        header: true,
-        skipEmptyLines: true,
-        complete: function(results) {
+    const whatsappContainer = document.getElementById('whatsappContainer');
+    const footer = document.getElementById('footer_id');
 
-          info = results.data;
-          // console.log(info);
-          const estado = info.find(item => item.Tipo === "Estado")?.Descripcion;
-          const anuncioTexto = info.find(item => item.Tipo === "Anuncio")?.Descripcion;
+    // --- INIT ---
+    window.addEventListener('scroll', checkOverlap);
+    window.addEventListener('resize', checkOverlap);
+    window.addEventListener('load', checkOverlap);
 
-          // Mostrar estado
-          const estadoDiv = document.getElementById('estadoKiosko');
-              estadoDiv.textContent = estado === 'a'
-                  ? '🟢 ABIERTO'
-                  : '🔴 CERRADO';
-              estadoDiv.className = estado === 'a'
-                  // ? 'text-green-600 text-center text-xl font-bold mb-4'
-                  // : 'text-red-600 text-center text-xl font-bold mb-4';
-                  ? 'bg-green-600 text-white font-bold text-xl px-4 py-2 rounded-lg shadow-lg border-1 border-green-800'
-                  : 'bg-green-600 text-white font-bold text-xl px-4 py-2 rounded-lg shadow-lg border-1 border-green-800';
+    // 1. INFO
+    fetch(urlCSVinfo)
+      .then(response => response.text())
+      .then(csvText => {
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          complete: function(results) {
+            const info = results.data;
+            const estado = info.find(item => item.Tipo === "Estado")?.Descripcion;
+            const anuncioTexto = info.find(item => item.Tipo === "Anuncio")?.Descripcion;
+            const fecha = info.find(item => item.Tipo === "FechaActualizacion")?.Descripcion || 'Reciente';
+            const eslogan = info.find(item => item.Tipo === "Eslogan")?.Descripcion;
 
-          const anuncioDiv = document.getElementById('anuncio');
-          if (anuncioTexto) {
-              anuncioDiv.textContent = anuncioTexto;
-              anuncioDiv.classList.remove('hidden');
+            const isOpen = estado === 'a';
+            const badgeClass = isOpen ? 'bg-white text-green-700 border-green-200' : 'bg-red-100 text-red-800 border-red-200';
+            const icon = isOpen ? '🟢' : '🔴';
+            const text = isOpen ? 'ABIERTO' : 'CERRADO';
+            const htmlEstado = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold tracking-wide shadow-sm ${badgeClass}"><span class="text-[10px]">${icon}</span> ${text}</span>`;
+
+            document.getElementById('estadoKioskoMovil').innerHTML = htmlEstado;
+            document.getElementById('estadoKioskoDesktop').innerHTML = htmlEstado;
+            if(eslogan) document.getElementById('eslogan-texto').textContent = eslogan;
+            if (anuncioTexto) {
+                document.getElementById('anuncio-texto').textContent = anuncioTexto;
+                document.getElementById('anuncio').classList.remove('hidden');
+            }
+            document.getElementById('fecha-actualizacion').textContent = `Actualizado: ${fecha}`;
           }
+        });
+      });
+  
+    // 2. PRODUCTOS
+    fetch(urlCSVproducts)
+      .then(response => response.text())
+      .then(csvText => {
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          complete: function(results) {
+            const todos = results.data;
+            
+            todos.forEach(prod => {
+                // Limpiar precio de símbolos raros
+                prod.PrecioLimpio = parseFloat(prod.Precio.replace(/[^\d.]/g, '')) || 0;
 
-          const fechaActualizacion = info.find(item => item.Tipo === "FechaActualizacion")?.Descripcion || 'desconocida';
-          document.getElementById('fecha-actualizacion').textContent = `Última actualización: ${fechaActualizacion}`;
+                if (prod.Imagen && prod.Imagen.trim().length > 5) {
+                    productosConFoto.push(prod);
+                } else {
+                    productosLista.push(prod);
+                }
+            });
 
+            productosConFotoFiltrados = productosConFoto;
+            productosListaFiltrados = productosLista;
+
+            containerGrid = document.getElementById('productos');
+            containerLista = document.getElementById('productos-lista');
+
+            // Buscador
+            const inputBuscador = document.getElementById('buscador');
+            const btnBorrar = document.getElementById('btnBorrarBusqueda');
+
+            inputBuscador.addEventListener('input', function (e) {
+                const valor = e.target.value.toLowerCase().trim();
+                const normalizar = (str) => str?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") || "";
+                
+                if(e.target.value.length > 0) {
+                    btnBorrar.classList.remove('hidden');
+                } else {
+                    btnBorrar.classList.add('hidden');
+                }
+
+                productosConFotoFiltrados = productosConFoto.filter(p => normalizar(p.Nombre).includes(normalizar(valor)));
+                productosListaFiltrados = productosLista.filter(p => normalizar(p.Nombre).includes(normalizar(valor)));
+
+                // Reiniciar contenedores e índices
+                containerGrid.innerHTML = '';
+                containerLista.innerHTML = '';
+                currentGridIndex = 0;
+                currentListIndex = 0;
+
+                const sinResultadosDiv = document.getElementById('sin-resultados');
+                const seccionListaDiv = document.getElementById('seccion-lista');
+
+                if (productosConFotoFiltrados.length === 0 && productosListaFiltrados.length === 0) {
+                    sinResultadosDiv.classList.remove('hidden');
+                    seccionListaDiv.classList.add('hidden');
+                    document.getElementById('btn-load-grid-container').classList.add('hidden');
+                    document.getElementById('btn-load-list-container').classList.add('hidden');
+                } else {
+                    sinResultadosDiv.classList.add('hidden');
+                    loadNextGridPage();
+                    loadNextListPage();
+                }
+            });
+
+            loadNextGridPage();
+            loadNextListPage();
+            
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('tituloProductosContainer').classList.remove('hidden');
+            containerGrid.classList.remove('hidden');
+            footer.classList.remove('hidden');
           }
         });
       })
-      .catch(error => console.error('Error al obtener el CSVinfo:', error));
-  
-  
-  fetch(urlCSVproducts)
-    .then(response => response.text())
-    .then(csvText => {
-      Papa.parse(csvText, {
-        header: true,
-        skipEmptyLines: true,
-        complete: function(results) {
-          document.getElementById('buscador').addEventListener('input', function (e) {
-          const valor = e.target.value.toLowerCase().trim();
-          productosFiltrados = productos.filter(p =>
-            p.Nombre?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(valor.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))  // no tiene en cuenta las tildes
-            // p.Nombre?.toLowerCase().includes(valor)
-            // p.Nombre?.toLowerCase().startsWith(valor)
-          );
+      .catch(error => console.error('Error CSV productos:', error));
 
-          // Reiniciar lista
-          document.getElementById('productos').innerHTML = '';
-          currentIndex = 0;
 
-          if (productosFiltrados.length === 0) {
-            document.getElementById('productos').innerHTML =
-              '<p class="text-center col-span-3 text-green-500">No se encontraron productos.</p>';
-          } else {
-            loadMoreProducts(); // Mostrar los primeros filtrados
+    // --- RENDER GRID (Con Botón Cargar Más) ---
+    function loadNextGridPage() {
+      const btnContainer = document.getElementById('btn-load-grid-container');
+      
+      // Slice de productos
+      const nextBatch = productosConFotoFiltrados.slice(currentGridIndex, currentGridIndex + pageSize);
+      
+      nextBatch.forEach(prod => {
+          const card = document.createElement('div');
+          card.className = 'product-card group bg-white rounded-xl border border-green-200 shadow-sm overflow-hidden relative flex flex-col';
+
+          const imageSrc = prod.Imagen;
+          const colorClase = colorMap[prod.Color?.toLowerCase().trim()] || 'bg-gray-600';
+          let etiquetaHTML = '';
+          if (prod.Etiqueta?.trim()) {
+              etiquetaHTML = `<span class="absolute top-3 right-3 z-10 ${colorClase} text-white text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow-sm">${prod.Etiqueta}</span>`;
           }
+
+          const prodString = JSON.stringify(prod).replace(/"/g, '&quot;');
+
+          card.innerHTML = `
+              ${etiquetaHTML}
+              <div class="h-40 sm:h-48 bg-gray-50 p-4 flex items-center justify-center overflow-hidden relative">
+                  <img src="${imageSrc}" alt="${prod.Nombre}" loading="lazy" class="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://img.icons8.com/ios/100/cccccc/no-image.png'; this.classList.add('opacity-40');">
+              </div>
+              <div class="p-3 sm:p-4 flex flex-col flex-grow">
+                  <h3 class="text-sm sm:text-base font-bold text-gray-800 leading-snug mb-1 group-hover:text-green-700 transition-colors line-clamp-2">${prod.Nombre}</h3>
+                  <p class="text-gray-500 text-xs line-clamp-2 mb-3 flex-grow">${prod.Descripcion || ''}</p>
+                  <div class="mt-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-3 border-t border-gray-100">
+                      <span class="text-lg sm:text-xl font-bold text-green-700">$${prod.Precio}</span>
+                      <button onclick="addToCart(${prodString})" class="w-full sm:w-auto flex items-center justify-center gap-1 bg-green-50 text-green-700 hover:bg-green-600 hover:text-white px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                          Agregar
+                      </button>
+                  </div>
+              </div>
+          `;
+          containerGrid.appendChild(card);
+      });
+      
+      currentGridIndex += pageSize;
+
+      // Mostrar u ocultar botón
+      if (currentGridIndex < productosConFotoFiltrados.length) {
+          btnContainer.classList.remove('hidden');
+      } else {
+          btnContainer.classList.add('hidden');
+      }
+    }
+
+    // --- RENDER LISTA (Con Botón Cargar Más) ---
+    function loadNextListPage() {
+        const container = document.getElementById('productos-lista');
+        const section = document.getElementById('seccion-lista');
+        const btnContainer = document.getElementById('btn-load-list-container');
+
+        if (productosListaFiltrados.length === 0) {
+            section.classList.add('hidden');
+            return;
+        }
+        section.classList.remove('hidden');
+
+        const nextBatch = productosListaFiltrados.slice(currentListIndex, currentListIndex + pageSize);
+
+        nextBatch.forEach(prod => {
+            const prodString = JSON.stringify(prod).replace(/"/g, '&quot;');
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'list-row-item bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between shadow-sm';
+            
+            itemDiv.innerHTML = `
+                <div class="flex-grow pr-3">
+                    <h4 class="font-bold text-gray-800 text-sm sm:text-base">${prod.Nombre}</h4>
+                    ${prod.Descripcion ? `<p class="text-xs text-gray-500 line-clamp-1 mt-0.5">${prod.Descripcion}</p>` : ''}
+                </div>
+                <div class="flex items-center gap-3 min-w-fit">
+                    <span class="font-bold text-green-700 text-lg">$${prod.Precio}</span>
+                    <button onclick="addToCart(${prodString})" class="flex items-center gap-1 bg-green-50 text-green-700 hover:bg-green-600 hover:text-white px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors shadow-sm">
+                        <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        Agregar
+                    </button>
+                </div>
+            `;
+            container.appendChild(itemDiv);
         });
 
-          productos = results.data;
-          // console.log(productos);
+        currentListIndex += pageSize;
 
-          productosFiltrados = productos; // Inicialmente, no hay filtro
-          container = document.getElementById('productos');
-
-          loadMoreProducts(); // Carga inicial de 10 productos
-          // mostrar icono de whatsapp
-          whatsappContainer.style.display = 'block';
-                 
-          // Mostrar productos y ocultar el spinner
-          document.getElementById('loader').style.display = 'none';
-          container.classList.remove('hidden');
-
+        // Mostrar u ocultar botón
+        if (currentListIndex < productosListaFiltrados.length) {
+            btnContainer.classList.remove('hidden');
+        } else {
+            btnContainer.classList.add('hidden');
         }
-      });
-    })
-    .catch(error => console.error('Error al obtener el CSVproducts:', error));
+    }
 
-      window.addEventListener('scroll', () => {
-        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+    // --- LOGICA BUSQUEDA ---
+    function limpiarBusqueda() {
+        const input = document.getElementById('buscador');
+        input.value = '';
+        // Disparar evento input manualmente para que corra el filtro
+        input.dispatchEvent(new Event('input'));
+        input.focus();
+    }
 
-        if (scrollTop + clientHeight >= scrollHeight - 5) {
-          if (currentIndex < productos.length) {
-            loadMoreProducts();
-          }
+    // --- LOGICA CARRITO ---
+
+    function toggleCart() {
+        const modal = document.getElementById('cartModal');
+        const overlay = document.getElementById('cartOverlay');
+        
+        if (modal.classList.contains('hidden')) {
+            // Abrir
+            modal.classList.remove('hidden');
+            // Pequeño delay para animación
+            setTimeout(() => {
+                modal.classList.remove('cart-closed');
+                modal.classList.add('cart-open');
+                overlay.classList.remove('opacity-0');
+            }, 10);
+        } else {
+            // Cerrar
+            modal.classList.remove('cart-open');
+            modal.classList.add('cart-closed');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
         }
-      });
+    }
 
+    function addToCart(product) {
+        const existingItem = cart.find(item => item.Nombre === product.Nombre);
+        if (existingItem) {
+            existingItem.cantidad++;
+        } else {
+            cart.push({ ...product, cantidad: 1 });
+        }
+        updateCartUI();
+        showToast();
+    }
 
-  function loadMoreProducts() {
-      // Mostrar los productos en el contenedor
-      const scrollLoader = document.getElementById('scroll-loader');
-      scrollLoader.classList.remove('hidden');
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        updateCartUI();
+    }
 
-      document.getElementById('tituloProductos').classList.remove('hidden'); 
-      document.getElementById('footer_id').classList.remove('hidden');
+    // FUNCIONES PARA MODAL DE CONFIRMACIÓN
+    function askClearCart() {
+        if(cart.length === 0) return;
+        const modal = document.getElementById('confirmModal');
+        modal.classList.remove('hidden');
+    }
 
-      // setTimeout(() => {}, 6000);
-      const product_slice = productosFiltrados.slice(currentIndex, currentIndex + pageSize);
-      product_slice.forEach(prod => {
-                
-                const card = document.createElement('div');
-                // card.className = 'bg-white rounded-2xl shadow p-4 border border-gray-200';
-                card.className = 'relative bg-white rounded-2xl shadow p-4 border border-gray-200';
+    function closeConfirmModal() {
+        document.getElementById('confirmModal').classList.add('hidden');
+    }
 
+    function confirmClearCart() {
+        cart = [];
+        updateCartUI();
+        closeConfirmModal();
+    }
 
-                
-                // Si no hay imagen, usar un icono por defecto local
-                const imageSrc = prod.Imagen ? prod.Imagen : 'fotos/no_imagen.jpg'; // Ruta relativa a la imagen de fallback
+    function changeQty(index, delta) {
+        if (cart[index].cantidad + delta > 0) {
+            cart[index].cantidad += delta;
+        } else {
+            removeFromCart(index);
+            return;
+        }
+        updateCartUI();
+    }
 
-                // Crear la imagen con el manejador de error para mostrar el icono si no se carga
-                const imageElement = document.createElement('img');
-                imageElement.src = imageSrc;
-                imageElement.alt = prod.Nombre;
-                imageElement.className = 'h-60 w-full object-contain rounded-md mb-3';
+    function updateCartUI() {
+        const container = document.getElementById('cartItemsContainer');
+        const countMobile = document.getElementById('cart-count-mobile');
+        const countDesktop = document.getElementById('cart-count-desktop');
+        const totalEl = document.getElementById('cartTotal');
+        const btnCheckout = document.getElementById('btnCheckout');
 
-                imageElement.onerror = () => {
-                    imageElement.src = 'fotos/no_imagen.jpg';
-                  };
+        // Update Counts
+        const totalItems = cart.reduce((sum, item) => sum + item.cantidad, 0);
+        countDesktop.textContent = totalItems;
+        countMobile.textContent = totalItems;
+        
+        if (totalItems > 0) countMobile.classList.remove('hidden');
+        else countMobile.classList.add('hidden');
 
-                // Agregar etiqueta si existe en el CSV
-                // Color de fondo dinámico desde la hoja de cálculo
-                const colorClase = colorMap[prod.Color?.toLowerCase().trim()] || 'bg-gray-500'
-                if (prod.Etiqueta?.toLowerCase().trim()) {
-                    const etiqueta = document.createElement('span');
-                    etiqueta.textContent = prod.Etiqueta;
-                    // etiqueta.className = 'absolute top-2 left-2 bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow';
-                    // etiqueta.className = 'absolute top-2 right-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow';
-                    etiqueta.className = `absolute top-2 right-2 ${colorClase} text-white text-sm font-semibold px-3 py-1.5 rounded-full shadow`;
+        // Update List
+        container.innerHTML = '';
+        let totalPrice = 0;
+
+        if (cart.length === 0) {
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-64 text-gray-400">
+                    <svg class="w-16 h-16 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <p>Tu carrito está vacío</p>
+                </div>`;
+            btnCheckout.disabled = true;
+            btnCheckout.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            btnCheckout.disabled = false;
+            btnCheckout.classList.remove('opacity-50', 'cursor-not-allowed');
+            
+            cart.forEach((item, index) => {
+                const subtotal = item.cantidad * item.PrecioLimpio;
+                totalPrice += subtotal;
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'flex items-center gap-3 bg-gray-50 p-3 rounded-lg';
+                itemDiv.innerHTML = `
+                    <!-- Imagen mini -->
+                    <div class="h-12 w-12 bg-white rounded border border-gray-200 flex-shrink-0 overflow-hidden">
+                        ${item.Imagen && item.Imagen.length > 5 
+                            ? `<img src="${item.Imagen}" class="h-full w-full object-contain">`
+                            : `<svg class="w-full h-full text-gray-300 p-2" fill="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>`}
+                    </div>
                     
-                    card.appendChild(etiqueta);
-                }
-                card.appendChild(imageElement);
+                    <!-- Info -->
+                    <div class="flex-grow">
+                        <h4 class="text-sm font-bold text-gray-800 line-clamp-1">${item.Nombre}</h4>
+                        <p class="text-xs text-green-700 font-semibold">$${item.Precio}</p>
+                    </div>
 
-                card.innerHTML += `
-                    <h2 class="text-xl font-semibold text-green-800">${prod.Nombre}</h2>
-                    <p class="text-gray-600 text-sm mb-2">${prod.Descripcion}</p>
-                    <p class="text-lg font-bold text-green-600">$${prod.Precio}</p>
+                    <!-- Controles -->
+                    <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-1 py-0.5">
+                        <button onclick="changeQty(${index}, -1)" class="text-gray-500 hover:text-red-500 px-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 12H4"></path></svg>
+                        </button>
+                        <span class="text-sm font-medium w-4 text-center">${item.cantidad}</span>
+                        <button onclick="changeQty(${index}, 1)" class="text-gray-500 hover:text-green-600 px-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+                        </button>
+                    </div>
+
+                    <!-- Eliminar -->
+                    <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 ml-1">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
                 `;
-                container.appendChild(card);
+                container.appendChild(itemDiv);
             });
+        }
 
-      currentIndex += pageSize;
-      scrollLoader.classList.add('hidden');
+        totalEl.textContent = `$${totalPrice}`;
+    }
+
+    function checkout() {
+        if (cart.length === 0) return;
+
+        let message = "Hola El Dinamiko, quisiera realizar el siguiente pedido:\n\n";
+        let total = 0;
+
+        cart.forEach(item => {
+            const subtotal = item.cantidad * item.PrecioLimpio;
+            total += subtotal;
+            message += `- *${item.cantidad}x* ${item.Nombre} ($${item.Precio}) = $${subtotal}\n`;
+        });
+
+        message += `\n *TOTAL ESTIMADO: $${total}*\n\n¿Tienen disponibilidad de estos productos?`;
+
+        const waLink = `https://wa.me/5358786491?text=${encodeURIComponent(message)}`;
+        window.open(waLink, '_blank');
+    }
+
+    function showToast() {
+        const toast = document.getElementById('toast');
+        toast.classList.remove('opacity-0', 'translate-y-10');
+        setTimeout(() => {
+            toast.classList.add('opacity-0', 'translate-y-10');
+        }, 2000);
     }
   
-  function checkOverlap() {
-    const whatsappBtn = document.getElementById('whatsappBtn');
-    const footer = document.getElementById('footer_id');
-
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          whatsappBtn.style.display = 'none';
+    function checkOverlap() {
+        const btn = document.getElementById('whatsappBtn');
+        if(!btn) return;
+        const footerRect = footer.getBoundingClientRect();
+        if (footerRect.top < window.innerHeight) {
+             btn.style.opacity = '0';
+             btn.style.pointerEvents = 'none';
         } else {
-          whatsappBtn.style.display = 'block';
+             btn.style.opacity = '1';
+             btn.style.pointerEvents = 'auto';
         }
-      });
-    }, {
-      root: null, // viewport
-      threshold: 0 // en cuanto un píxel del footer aparece
-    });
-
-    observer.observe(footer);
-  }
+    }
   </script>
 </body>
 </html>
 
-
-
-<!-- fotos/malta_bucanero.webp -->
-<!-- Promo 2x1 a partir de las 2 PM -->
- <!-- Recién abrimos, ven a conocernos. -->
