@@ -30,20 +30,24 @@
     .product-card { transition: all 0.3s ease; }
     .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
     
-    /* Estilo lista limpia */
     .list-row-item { transition: background-color 0.2s ease; }
     .list-row-item:hover { background-color: #f0fdf4; }
 
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #f1f1f1; }
     ::-webkit-scrollbar-thumb { background: #15803d; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #14532d; }
 
-    /* Animación Carrito */
     .cart-panel { transition: transform 0.3s ease-in-out; }
     .cart-open .cart-panel { transform: translateX(0); }
     .cart-closed .cart-panel { transform: translateX(100%); }
+    
+    @keyframes like-bounce {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+    .animate-like { animation: like-bounce 0.4s ease; color: #ef4444; }
   </style>
 </head>
 
@@ -51,12 +55,10 @@
 
   <!-- HEADER FIXED -->
   <header class="fixed top-0 left-0 right-0 z-40 shadow-lg">
-    <!-- Parte Superior -->
     <div class="bg-green-700 text-white px-4 py-3 border-b border-green-800">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6">
             
             <div class="flex w-full md:w-auto justify-between items-center">
-                <!-- Logo -->
                 <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
                     <div class="bg-white p-1.5 rounded-full shadow-md">
                         <svg class="w-5 h-5 text-green-700" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9l1-5h16l1 5v2a2 2 0 01-2 2v6a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3H9v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-6a2 2 0 01-2-2V9zM4.618 4L4 8h16l-.618-4H4.618z" /></svg>
@@ -64,7 +66,6 @@
                     <h1 class="text-xl font-bold tracking-tight">El Dinamiko</h1>
                 </div>
 
-                <!-- Botón Carrito MÓVIL y Estado -->
                 <div class="flex items-center gap-3 md:hidden">
                     <div id="estadoKioskoMovil"></div>
                     <button onclick="toggleCart()" class="relative p-2 bg-green-800 rounded-full hover:bg-green-600 transition">
@@ -74,22 +75,16 @@
                 </div>
             </div>
 
-            <!-- Buscador -->
             <div class="relative w-full md:max-w-md">
                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </span>
-                
-                <!-- Input Buscador -->
                 <input id="buscador" type="text" placeholder="Buscar productos..." class="w-full pl-9 pr-10 py-2 bg-green-50 text-gray-900 text-sm rounded-full shadow-inner focus:outline-none focus:ring-2 focus:ring-green-300 transition-all" />
-                
-                <!-- Botón X para borrar búsqueda -->
                 <button id="btnBorrarBusqueda" onclick="limpiarBusqueda()" class="absolute inset-y-0 right-0 pr-3 flex items-center hidden text-gray-400 hover:text-gray-600 focus:outline-none transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
 
-            <!-- Estado y Carrito DESKTOP -->
             <div class="hidden md:flex items-center gap-4 min-w-fit">
                 <div id="estadoKioskoDesktop"></div>
                 <button onclick="toggleCart()" class="flex items-center gap-2 bg-green-800 hover:bg-green-600 px-4 py-2 rounded-full transition text-sm font-semibold shadow-sm">
@@ -101,7 +96,6 @@
         </div>
     </div>
 
-    <!-- Barra informativa -->
     <div class="bg-green-800 text-green-100 text-xs sm:text-sm py-1.5 shadow-md relative z-30">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-1">
             <p id="eslogan-texto" class="font-medium tracking-wide italic">¡Productos frescos, precios justos, cerca de ti!</p>
@@ -112,11 +106,8 @@
     </div>
   </header>
 
-
-  <!-- CONTENIDO PRINCIPAL -->
   <main class="flex-grow max-w-7xl mx-auto w-full px-3 py-6 sm:px-6 lg:px-8">
     
-    <!-- Alerta -->
     <div id="anuncio" class="hidden mb-8 rounded-lg border-l-4 border-red-500 bg-red-50 p-4 shadow-sm mx-auto max-w-3xl transition-all">
         <div class="flex items-center space-x-3 text-red-800">
             <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -124,13 +115,11 @@
         </div>
     </div>
 
-    <!-- Loader -->
     <div id="loader" class="flex flex-col justify-center items-center my-20">
         <div class="animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-green-600"></div>
         <span class="mt-3 text-green-700 font-medium text-sm animate-pulse">Cargando catálogo...</span>
     </div>
 
-    <!-- Header Catálogo -->
     <div id="tituloProductosContainer" class="hidden flex flex-col items-center justify-center mb-8 text-center">
        <h2 class="text-2xl sm:text-3xl font-bold text-green-800 tracking-tight">Catálogo Disponible</h2>
        <span class="mt-2 inline-block px-3 py-1 rounded-md bg-yellow-100 text-yellow-800 text-xs sm:text-sm font-semibold border border-yellow-200 shadow-sm">
@@ -138,10 +127,8 @@
        </span>
     </div>
 
-    <!-- GRID PRINCIPAL (Productos con Foto) -->
     <div id="productos" class="hidden grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 mb-6"></div>
     
-    <!-- Botón Cargar Más (Grid) -->
     <div id="btn-load-grid-container" class="hidden flex justify-center mb-12">
         <button onclick="loadNextGridPage()" class="flex items-center gap-2 bg-white border border-green-300 text-green-700 hover:bg-green-50 px-6 py-2.5 rounded-full font-semibold shadow-sm transition-all">
             <span>Ver más productos</span>
@@ -149,15 +136,12 @@
         </button>
     </div>
 
-    <!-- LISTA LIGERA (Sin Foto) -->
     <div id="seccion-lista" class="hidden max-w-4xl mx-auto mt-10">
         <div class="flex items-center gap-2 mb-4 border-b border-gray-200 pb-2">
             <svg class="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
             <h3 class="text-xl font-bold text-gray-700">Otras Ofertas</h3>
         </div>
         <div id="productos-lista" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6"></div>
-        
-        <!-- Botón Cargar Más (Lista) -->
         <div id="btn-load-list-container" class="hidden flex justify-center mb-6">
             <button onclick="loadNextListPage()" class="flex items-center gap-2 bg-white border border-green-300 text-green-700 hover:bg-green-50 px-6 py-2.5 rounded-full font-semibold shadow-sm transition-all">
                 <span>Cargar más ofertas</span>
@@ -170,9 +154,55 @@
         <p class="text-gray-400 text-lg">No encontramos productos con ese nombre 🧐</p>
     </div>
 
+    <!-- SECCION OPINIONES DE CLIENTES (Oculta por defecto con 'hidden') -->
+    <section id="seccion-opiniones" class="hidden max-w-4xl mx-auto mt-16 mb-12 px-2">
+        <div class="flex items-center justify-between mb-6 border-b border-gray-200 pb-3">
+            <h3 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+                Opiniones
+            </h3>
+            <button onclick="document.getElementById('form-opinion').classList.toggle('hidden')" class="text-sm bg-green-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-green-700 transition shadow-sm">
+                + Dejar Opinión
+            </button>
+        </div>
+
+        <!-- Formulario (Oculto por defecto) -->
+        <div id="form-opinion" class="hidden bg-white p-6 rounded-xl shadow-md mb-8 border border-green-100">
+            <h4 class="text-lg font-bold mb-4 text-gray-700">Cuéntanos tu experiencia</h4>
+            <form id="reviewForm" onsubmit="submitReview(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre</label>
+                    <input type="text" name="nombre" required class="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition" placeholder="Tu nombre">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Comentario</label>
+                    <textarea name="comentario" required rows="3" class="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition" placeholder="¿Qué te pareció nuestro servicio?"></textarea>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="document.getElementById('form-opinion').classList.add('hidden')" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg font-medium">Cancelar</button>
+                    <button type="submit" id="btnSubmitReview" class="px-6 py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 shadow-md transition flex items-center gap-2">
+                        <span>Publicar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Lista de Opiniones -->
+        <div id="container-opiniones" class="space-y-3">
+            <!-- Se llena con JS -->
+        </div>
+
+        <!-- Botón Cargar Más Opiniones -->
+        <div id="btn-load-reviews-container" class="hidden flex justify-center mt-8">
+            <button onclick="loadNextReviews()" class="text-green-700 text-sm font-semibold hover:underline flex items-center gap-1">
+                Ver comentarios anteriores
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+        </div>
+    </section>
+
   </main>
 
-  <!-- FOOTER -->
   <footer id="footer_id" class="bg-gray-900 text-gray-300 mt-auto hidden">
     <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
       <div class="space-y-3">
@@ -201,44 +231,25 @@
     <div class="bg-black/30 py-3 text-center text-xs text-gray-600">&copy; 2025 Kiosko El Dinamiko.</div>
   </footer>
 
-  <!-- MODAL CARRITO -->
   <div id="cartModal" class="fixed inset-0 z-[60] hidden cart-closed">
-      <!-- Overlay Oscuro -->
       <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity opacity-0" id="cartOverlay" onclick="toggleCart()"></div>
-      
-      <!-- Panel Lateral -->
       <div class="cart-panel absolute right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl flex flex-col h-full">
-          
-          <!-- Header Carrito -->
           <div class="bg-green-700 text-white px-5 py-4 flex justify-between items-center shadow-md">
               <div class="flex items-center gap-2">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                 <h2 class="text-xl font-bold">Tu Pedido</h2>
               </div>
-              
               <div class="flex items-center gap-4">
-                  <!-- Botón vaciar llama a askClearCart -->
                   <button onclick="askClearCart()" class="text-white/80 hover:text-red-200 transition flex items-center gap-1 text-xs font-medium bg-green-800/50 px-2 py-1 rounded" title="Vaciar carrito">
                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                      Vaciar
                   </button>
-
                   <button onclick="toggleCart()" class="text-white/80 hover:text-white transition">
                       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                   </button>
               </div>
           </div>
-
-          <!-- Lista de Items -->
-          <div class="flex-grow overflow-y-auto p-4 space-y-4" id="cartItemsContainer">
-              <!-- Se llena con JS -->
-              <div class="flex flex-col items-center justify-center h-full text-gray-400">
-                  <svg class="w-16 h-16 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                  <p>Tu carrito está vacío</p>
-              </div>
-          </div>
-
-          <!-- Footer Carrito (Total + Botón) -->
+          <div class="flex-grow overflow-y-auto p-4 space-y-4" id="cartItemsContainer"></div>
           <div class="border-t border-gray-200 p-5 bg-gray-50">
               <div class="flex justify-between items-center mb-4 text-lg font-bold text-gray-800">
                   <span>Total Estimado:</span>
@@ -253,7 +264,6 @@
       </div>
   </div>
 
-  <!-- MODAL DE CONFIRMACIÓN (VACIAR CARRITO) -->
   <div id="confirmModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
       <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden transform transition-all scale-100">
           <div class="p-6 text-center">
@@ -278,7 +288,6 @@
       </div>
   </div>
 
-  <!-- WhatsApp Flotante (General) -->
   <div id="whatsappContainer">
       <a href="https://wa.me/5358786491?text=Hola%2C%20tengo%20una%20consulta%20general"  
         target="_blank" 
@@ -288,19 +297,25 @@
       </a>
   </div>
 
-  <!-- Toast Notificación -->
   <div id="toast" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg text-sm transition-all duration-300 opacity-0 translate-y-10 pointer-events-none z-50 flex items-center gap-2">
       <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-      <span>Agregado al carrito</span>
+      <span id="toast-msg">Agregado al carrito</span>
   </div>
 
   <script>
-    // --- VARIABLES ---
+    // --- CONFIGURACIÓN ---
     const baseCSVtabproducts = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4ctMV-8Xpe3jmtsXhq5YGTDwtM47Z9bu-TrZBkQHAtXuSSpKiwWNInJDDUWhBI2Z2s27o_uPYtu8e/pub?gid=0&single=true&output=csv';
     const baseCSVtabinfo = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4ctMV-8Xpe3jmtsXhq5YGTDwtM47Z9bu-TrZBkQHAtXuSSpKiwWNInJDDUWhBI2Z2s27o_uPYtu8e/pub?gid=442603261&single=true&output=csv';
     
+    // ⚠️ PEGA AQUÍ EL ENLACE CSV DE LA NUEVA PESTAÑA "OPINIONES" ⚠️
+    const LINK_CSV_OPINIONES = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4ctMV-8Xpe3jmtsXhq5YGTDwtM47Z9bu-TrZBkQHAtXuSSpKiwWNInJDDUWhBI2Z2s27o_uPYtu8e/pub?gid=1765661713&single=true&output=csv'; 
+
+    // ⚠️ PEGA AQUÍ EL ENLACE DEL SCRIPT (WEB APP URL) ⚠️
+    const LINK_APP_SCRIPT = 'https://script.google.com/macros/s/AKfycbyVYJPCpVHKVSqtOuW5-En4nDjPK4BfaxYD6tEihYZ7pR7KkcdKSYT9_Y5uwpsa_HMHOA/exec';
+
     const urlCSVinfo = `${baseCSVtabinfo}&cacheBust=${Date.now()}`;
     const urlCSVproducts = `${baseCSVtabproducts}&cacheBust=${Date.now()}`;
+    const urlCSVOpiniones = `${LINK_CSV_OPINIONES}&cacheBust=${Date.now()}`; 
     
     const colorMap = {
           azul: 'bg-blue-600',
@@ -312,13 +327,16 @@
  
     let productosConFoto = [], productosConFotoFiltrados = [];
     let productosLista = [], productosListaFiltrados = [];
+    let opinionesTodas = [];
     let cart = []; 
 
-    // Control de Paginación
+    // Paginación
     let containerGrid, containerLista;
     let currentGridIndex = 0;
     let currentListIndex = 0;
-    const pageSize = 10; // Modificado a 10 items
+    let currentReviewIndex = 0;
+    const pageSize = 10;
+    const reviewPageSize = 3;
 
     const whatsappContainer = document.getElementById('whatsappContainer');
     const footer = document.getElementById('footer_id');
@@ -369,16 +387,10 @@
           skipEmptyLines: true,
           complete: function(results) {
             const todos = results.data;
-            
             todos.forEach(prod => {
-                // Limpiar precio de símbolos raros
                 prod.PrecioLimpio = parseFloat(prod.Precio.replace(/[^\d.]/g, '')) || 0;
-
-                if (prod.Imagen && prod.Imagen.trim().length > 5) {
-                    productosConFoto.push(prod);
-                } else {
-                    productosLista.push(prod);
-                }
+                if (prod.Imagen && prod.Imagen.trim().length > 5) productosConFoto.push(prod);
+                else productosLista.push(prod);
             });
 
             productosConFotoFiltrados = productosConFoto;
@@ -387,7 +399,6 @@
             containerGrid = document.getElementById('productos');
             containerLista = document.getElementById('productos-lista');
 
-            // Buscador
             const inputBuscador = document.getElementById('buscador');
             const btnBorrar = document.getElementById('btnBorrarBusqueda');
 
@@ -395,16 +406,12 @@
                 const valor = e.target.value.toLowerCase().trim();
                 const normalizar = (str) => str?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") || "";
                 
-                if(e.target.value.length > 0) {
-                    btnBorrar.classList.remove('hidden');
-                } else {
-                    btnBorrar.classList.add('hidden');
-                }
+                if(e.target.value.length > 0) btnBorrar.classList.remove('hidden');
+                else btnBorrar.classList.add('hidden');
 
                 productosConFotoFiltrados = productosConFoto.filter(p => normalizar(p.Nombre).includes(normalizar(valor)));
                 productosListaFiltrados = productosLista.filter(p => normalizar(p.Nombre).includes(normalizar(valor)));
 
-                // Reiniciar contenedores e índices
                 containerGrid.innerHTML = '';
                 containerLista.innerHTML = '';
                 currentGridIndex = 0;
@@ -432,30 +439,180 @@
             document.getElementById('tituloProductosContainer').classList.remove('hidden');
             containerGrid.classList.remove('hidden');
             footer.classList.remove('hidden');
+
+            // Llamar opiniones al inicio (se cargarán ocultas y aparecerán al terminar el fetch)
+            fetchOpiniones();
           }
         });
       })
       .catch(error => console.error('Error CSV productos:', error));
 
+    // 3. OPINIONES
+    function fetchOpiniones() {
+        if(LINK_CSV_OPINIONES.includes('ENLACE')) {
+            document.getElementById('container-opiniones').innerHTML = '<p class="text-center text-xs text-red-400">Falta configurar enlace CSV Opiniones</p>';
+            document.getElementById('seccion-opiniones').classList.remove('hidden');
+            return;
+        }
 
-    // --- RENDER GRID (Con Botón Cargar Más) ---
+        fetch(urlCSVOpiniones)
+            .then(res => res.text())
+            .then(text => {
+                Papa.parse(text, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        // Filtro: Ocultar si "hidden" es "off". Mostrar si "on" o vacío.
+                        const rawData = results.data;
+                        const filteredData = rawData.filter(item => {
+                            const hiddenVal = item.hidden ? item.hidden.toLowerCase().trim() : 'on';
+                            return hiddenVal !== 'off';
+                        });
+
+                        opinionesTodas = filteredData.reverse();
+                        
+                        currentReviewIndex = 0;
+                        document.getElementById('container-opiniones').innerHTML = '';
+                        
+                        if(opinionesTodas.length === 0) {
+                            document.getElementById('container-opiniones').innerHTML = '<p class="text-center text-gray-400 italic">Sé el primero en opinar.</p>';
+                        } else {
+                            loadNextReviews();
+                        }
+                        // AHORA mostramos la sección, después de cargar
+                        document.getElementById('seccion-opiniones').classList.remove('hidden');
+                    }
+                });
+            })
+            .catch(err => console.error("Error opiniones", err));
+    }
+
+    function loadNextReviews() {
+        const container = document.getElementById('container-opiniones');
+        const btnContainer = document.getElementById('btn-load-reviews-container');
+        
+        const nextBatch = opinionesTodas.slice(currentReviewIndex, currentReviewIndex + reviewPageSize);
+
+        nextBatch.forEach(rev => {
+            if(!rev.nombre) return; 
+
+            const likedKey = `liked_${rev.id}`;
+            const isLiked = localStorage.getItem(likedKey);
+            const heartClass = isLiked ? 'text-red-500 fill-current' : 'text-gray-300 hover:text-red-400';
+            const likesCount = rev.likes || 0;
+
+            const div = document.createElement('div');
+            div.className = 'bg-white border border-gray-100 p-3 rounded-xl shadow-sm'; // p-3 para más compacto
+            
+            // Render de Respuesta Admin
+            let adminReplyHTML = '';
+            if(rev.respuesta_admin && rev.respuesta_admin.trim().length > 0) {
+                adminReplyHTML = `
+                    <div class="mt-2 ml-2 bg-gray-50 border-l-2 border-green-500 p-2 rounded-r">
+                        <p class="text-[10px] font-bold text-green-800">Respuesta de El Dinamiko:</p>
+                        <p class="text-xs text-gray-600 leading-tight">${rev.respuesta_admin}</p>
+                    </div>
+                `;
+            }
+
+            // Diseño conciso: Fecha al lado del nombre, comentario debajo.
+            div.innerHTML = `
+                <div class="flex justify-between items-start mb-1">
+                    <div class="flex items-baseline gap-2">
+                        <h5 class="font-bold text-gray-800 text-sm">${rev.nombre}</h5>
+                        <span class="text-[10px] text-gray-400">${rev.fecha}</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span id="likes-count-${rev.id}" class="text-xs font-bold text-gray-500">${likesCount}</span>
+                        <button onclick="darLike('${rev.id}', this)" ${isLiked ? 'disabled' : ''} class="focus:outline-none transition-transform active:scale-90">
+                            <svg class="w-4 h-4 ${heartClass}" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                <p class="text-xs sm:text-sm text-gray-600 leading-snug">${rev.comentario}</p>
+                ${adminReplyHTML}
+            `;
+            container.appendChild(div);
+        });
+
+        currentReviewIndex += reviewPageSize;
+        
+        if(currentReviewIndex < opinionesTodas.length) {
+            btnContainer.classList.remove('hidden');
+        } else {
+            btnContainer.classList.add('hidden');
+        }
+    }
+
+    function submitReview(e) {
+        e.preventDefault();
+        if(LINK_APP_SCRIPT.includes('ENLACE')) { alert('Falta configurar Script'); return; }
+
+        const btn = document.getElementById('btnSubmitReview');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '...';
+
+        const formData = new FormData(e.target);
+        const data = new URLSearchParams();
+        data.append('action', 'nueva');
+        data.append('nombre', formData.get('nombre'));
+        data.append('comentario', formData.get('comentario'));
+
+        fetch(LINK_APP_SCRIPT, {
+            method: 'POST',
+            body: data
+        })
+        .then(() => {
+            document.getElementById('form-opinion').classList.add('hidden');
+            e.target.reset();
+            showToast('¡Opinión enviada! Aparecerá en breve.');
+            setTimeout(fetchOpiniones, 2000);
+        })
+        .catch(err => {
+            alert('Error al enviar. Intenta nuevamente.');
+            console.error(err);
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        });
+    }
+
+    function darLike(id, btnElement) {
+        const countSpan = document.getElementById(`likes-count-${id}`);
+        let current = parseInt(countSpan.innerText);
+        countSpan.innerText = current + 1;
+        
+        const svg = btnElement.querySelector('svg');
+        svg.classList.remove('text-gray-300', 'hover:text-red-400');
+        svg.classList.add('text-red-500', 'fill-current', 'animate-like');
+        svg.setAttribute('fill', 'currentColor');
+        btnElement.disabled = true;
+
+        localStorage.setItem(`liked_${id}`, 'true');
+
+        if(!LINK_APP_SCRIPT.includes('ENLACE')) {
+            const data = new URLSearchParams();
+            data.append('action', 'like');
+            data.append('id', id);
+            fetch(LINK_APP_SCRIPT, { method: 'POST', body: data });
+        }
+    }
+
+    // Llamar opiniones al inicio (se cargarán ocultas y aparecerán al terminar el fetch)
+    // fetchOpiniones();
+
+    // --- FUNCIONES DE RENDERIZADO ---
     function loadNextGridPage() {
       const btnContainer = document.getElementById('btn-load-grid-container');
-      
-      // Slice de productos
       const nextBatch = productosConFotoFiltrados.slice(currentGridIndex, currentGridIndex + pageSize);
-      
       nextBatch.forEach(prod => {
           const card = document.createElement('div');
           card.className = 'product-card group bg-white rounded-xl border border-green-200 shadow-sm overflow-hidden relative flex flex-col';
-
           const imageSrc = prod.Imagen;
           const colorClase = colorMap[prod.Color?.toLowerCase().trim()] || 'bg-gray-600';
-          let etiquetaHTML = '';
-          if (prod.Etiqueta?.trim()) {
-              etiquetaHTML = `<span class="absolute top-3 right-3 z-10 ${colorClase} text-white text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow-sm">${prod.Etiqueta}</span>`;
-          }
-
+          let etiquetaHTML = prod.Etiqueta?.trim() ? `<span class="absolute top-3 right-3 z-10 ${colorClase} text-white text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow-sm">${prod.Etiqueta}</span>` : '';
           const prodString = JSON.stringify(prod).replace(/"/g, '&quot;');
 
           card.innerHTML = `
@@ -477,36 +634,22 @@
           `;
           containerGrid.appendChild(card);
       });
-      
       currentGridIndex += pageSize;
-
-      // Mostrar u ocultar botón
-      if (currentGridIndex < productosConFotoFiltrados.length) {
-          btnContainer.classList.remove('hidden');
-      } else {
-          btnContainer.classList.add('hidden');
-      }
+      if (currentGridIndex < productosConFotoFiltrados.length) btnContainer.classList.remove('hidden');
+      else btnContainer.classList.add('hidden');
     }
 
-    // --- RENDER LISTA (Con Botón Cargar Más) ---
     function loadNextListPage() {
         const container = document.getElementById('productos-lista');
         const section = document.getElementById('seccion-lista');
         const btnContainer = document.getElementById('btn-load-list-container');
-
-        if (productosListaFiltrados.length === 0) {
-            section.classList.add('hidden');
-            return;
-        }
+        if (productosListaFiltrados.length === 0) { section.classList.add('hidden'); return; }
         section.classList.remove('hidden');
-
         const nextBatch = productosListaFiltrados.slice(currentListIndex, currentListIndex + pageSize);
-
         nextBatch.forEach(prod => {
             const prodString = JSON.stringify(prod).replace(/"/g, '&quot;');
             const itemDiv = document.createElement('div');
             itemDiv.className = 'list-row-item bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between shadow-sm';
-            
             itemDiv.innerHTML = `
                 <div class="flex-grow pr-3">
                     <h4 class="font-bold text-gray-800 text-sm sm:text-base">${prod.Nombre}</h4>
@@ -522,61 +665,37 @@
             `;
             container.appendChild(itemDiv);
         });
-
         currentListIndex += pageSize;
-
-        // Mostrar u ocultar botón
-        if (currentListIndex < productosListaFiltrados.length) {
-            btnContainer.classList.remove('hidden');
-        } else {
-            btnContainer.classList.add('hidden');
-        }
+        if (currentListIndex < productosListaFiltrados.length) btnContainer.classList.remove('hidden');
+        else btnContainer.classList.add('hidden');
     }
 
-    // --- LOGICA BUSQUEDA ---
     function limpiarBusqueda() {
         const input = document.getElementById('buscador');
         input.value = '';
-        // Disparar evento input manualmente para que corra el filtro
         input.dispatchEvent(new Event('input'));
         input.focus();
     }
 
     // --- LOGICA CARRITO ---
-
     function toggleCart() {
         const modal = document.getElementById('cartModal');
         const overlay = document.getElementById('cartOverlay');
-        
         if (modal.classList.contains('hidden')) {
-            // Abrir
             modal.classList.remove('hidden');
-            // Pequeño delay para animación
-            setTimeout(() => {
-                modal.classList.remove('cart-closed');
-                modal.classList.add('cart-open');
-                overlay.classList.remove('opacity-0');
-            }, 10);
+            setTimeout(() => { modal.classList.remove('cart-closed'); modal.classList.add('cart-open'); overlay.classList.remove('opacity-0'); }, 10);
         } else {
-            // Cerrar
-            modal.classList.remove('cart-open');
-            modal.classList.add('cart-closed');
-            overlay.classList.add('opacity-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
+            modal.classList.remove('cart-open'); modal.classList.add('cart-closed'); overlay.classList.add('opacity-0');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
         }
     }
 
     function addToCart(product) {
         const existingItem = cart.find(item => item.Nombre === product.Nombre);
-        if (existingItem) {
-            existingItem.cantidad++;
-        } else {
-            cart.push({ ...product, cantidad: 1 });
-        }
+        if (existingItem) existingItem.cantidad++;
+        else cart.push({ ...product, cantidad: 1 });
         updateCartUI();
-        showToast();
+        showToast('Agregado al carrito');
     }
 
     function removeFromCart(index) {
@@ -584,30 +703,13 @@
         updateCartUI();
     }
 
-    // FUNCIONES PARA MODAL DE CONFIRMACIÓN
-    function askClearCart() {
-        if(cart.length === 0) return;
-        const modal = document.getElementById('confirmModal');
-        modal.classList.remove('hidden');
-    }
-
-    function closeConfirmModal() {
-        document.getElementById('confirmModal').classList.add('hidden');
-    }
-
-    function confirmClearCart() {
-        cart = [];
-        updateCartUI();
-        closeConfirmModal();
-    }
+    function askClearCart() { if(cart.length === 0) return; document.getElementById('confirmModal').classList.remove('hidden'); }
+    function closeConfirmModal() { document.getElementById('confirmModal').classList.add('hidden'); }
+    function confirmClearCart() { cart = []; updateCartUI(); closeConfirmModal(); }
 
     function changeQty(index, delta) {
-        if (cart[index].cantidad + delta > 0) {
-            cart[index].cantidad += delta;
-        } else {
-            removeFromCart(index);
-            return;
-        }
+        if (cart[index].cantidad + delta > 0) cart[index].cantidad += delta;
+        else removeFromCart(index);
         updateCartUI();
     }
 
@@ -618,97 +720,55 @@
         const totalEl = document.getElementById('cartTotal');
         const btnCheckout = document.getElementById('btnCheckout');
 
-        // Update Counts
         const totalItems = cart.reduce((sum, item) => sum + item.cantidad, 0);
         countDesktop.textContent = totalItems;
         countMobile.textContent = totalItems;
-        
-        if (totalItems > 0) countMobile.classList.remove('hidden');
-        else countMobile.classList.add('hidden');
+        if (totalItems > 0) countMobile.classList.remove('hidden'); else countMobile.classList.add('hidden');
 
-        // Update List
         container.innerHTML = '';
         let totalPrice = 0;
 
         if (cart.length === 0) {
-            container.innerHTML = `
-                <div class="flex flex-col items-center justify-center h-64 text-gray-400">
-                    <svg class="w-16 h-16 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    <p>Tu carrito está vacío</p>
-                </div>`;
-            btnCheckout.disabled = true;
-            btnCheckout.classList.add('opacity-50', 'cursor-not-allowed');
+            container.innerHTML = `<div class="flex flex-col items-center justify-center h-64 text-gray-400"><svg class="w-16 h-16 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><p>Tu carrito está vacío</p></div>`;
+            btnCheckout.disabled = true; btnCheckout.classList.add('opacity-50', 'cursor-not-allowed');
         } else {
-            btnCheckout.disabled = false;
-            btnCheckout.classList.remove('opacity-50', 'cursor-not-allowed');
-            
+            btnCheckout.disabled = false; btnCheckout.classList.remove('opacity-50', 'cursor-not-allowed');
             cart.forEach((item, index) => {
                 const subtotal = item.cantidad * item.PrecioLimpio;
                 totalPrice += subtotal;
-
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'flex items-center gap-3 bg-gray-50 p-3 rounded-lg';
                 itemDiv.innerHTML = `
-                    <!-- Imagen mini -->
-                    <div class="h-12 w-12 bg-white rounded border border-gray-200 flex-shrink-0 overflow-hidden">
-                        ${item.Imagen && item.Imagen.length > 5 
-                            ? `<img src="${item.Imagen}" class="h-full w-full object-contain">`
-                            : `<svg class="w-full h-full text-gray-300 p-2" fill="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>`}
-                    </div>
-                    
-                    <!-- Info -->
-                    <div class="flex-grow">
-                        <h4 class="text-sm font-bold text-gray-800 line-clamp-1">${item.Nombre}</h4>
-                        <p class="text-xs text-green-700 font-semibold">$${item.Precio}</p>
-                    </div>
-
-                    <!-- Controles -->
-                    <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-1 py-0.5">
-                        <button onclick="changeQty(${index}, -1)" class="text-gray-500 hover:text-red-500 px-1">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 12H4"></path></svg>
-                        </button>
-                        <span class="text-sm font-medium w-4 text-center">${item.cantidad}</span>
-                        <button onclick="changeQty(${index}, 1)" class="text-gray-500 hover:text-green-600 px-1">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
-                        </button>
-                    </div>
-
-                    <!-- Eliminar -->
-                    <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 ml-1">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                    </button>
+                    <div class="h-12 w-12 bg-white rounded border border-gray-200 flex-shrink-0 overflow-hidden">${item.Imagen && item.Imagen.length > 5 ? `<img src="${item.Imagen}" class="h-full w-full object-contain">` : `<svg class="w-full h-full text-gray-300 p-2" fill="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>`}</div>
+                    <div class="flex-grow"><h4 class="text-sm font-bold text-gray-800 line-clamp-1">${item.Nombre}</h4><p class="text-xs text-green-700 font-semibold">$${item.Precio}</p></div>
+                    <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-1 py-0.5"><button onclick="changeQty(${index}, -1)" class="text-gray-500 hover:text-red-500 px-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 12H4"></path></svg></button><span class="text-sm font-medium w-4 text-center">${item.cantidad}</span><button onclick="changeQty(${index}, 1)" class="text-gray-500 hover:text-green-600 px-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg></button></div>
+                    <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 ml-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
                 `;
                 container.appendChild(itemDiv);
             });
         }
-
         totalEl.textContent = `$${totalPrice}`;
     }
 
     function checkout() {
         if (cart.length === 0) return;
-
         let message = "Hola El Dinamiko, quisiera realizar el siguiente pedido:\n\n";
         let total = 0;
-
         cart.forEach(item => {
             const subtotal = item.cantidad * item.PrecioLimpio;
             total += subtotal;
             message += `- *${item.cantidad}x* ${item.Nombre} ($${item.Precio}) = $${subtotal}\n`;
         });
-
         message += `\n *TOTAL ESTIMADO: $${total}*\n\n¿Tienen disponibilidad de estos productos?`;
-
         const waLink = `https://wa.me/5358786491?text=${encodeURIComponent(message)}`;
         window.open(waLink, '_blank');
     }
 
-    function showToast() {
+    function showToast(msg) {
         const toast = document.getElementById('toast');
+        document.getElementById('toast-msg').innerText = msg;
         toast.classList.remove('opacity-0', 'translate-y-10');
-        setTimeout(() => {
-            toast.classList.add('opacity-0', 'translate-y-10');
-        }, 2000);
+        setTimeout(() => { toast.classList.add('opacity-0', 'translate-y-10'); }, 2000);
     }
   
     function checkOverlap() {
@@ -716,14 +776,11 @@
         if(!btn) return;
         const footerRect = footer.getBoundingClientRect();
         if (footerRect.top < window.innerHeight) {
-             btn.style.opacity = '0';
-             btn.style.pointerEvents = 'none';
+             btn.style.opacity = '0'; btn.style.pointerEvents = 'none';
         } else {
-             btn.style.opacity = '1';
-             btn.style.pointerEvents = 'auto';
+             btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
         }
     }
   </script>
 </body>
 </html>
-
